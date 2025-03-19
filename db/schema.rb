@@ -26,4 +26,23 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_18_195217) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  create_table "searches", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "country_id"
+    t.string "app_name"
+  end
+
+  create_table "countries", force: :cascade do |t|
+    t.string "name"
+  end
+
+  create_table "reviews", force: :cascade do |t|
+    t.integer "rating"
+    t.text "response"
+    t.integer "search_id"
+    t.string "store"
+    t.string "title"
+    t.datetime "created_at", null: false
+  end
+
 end
