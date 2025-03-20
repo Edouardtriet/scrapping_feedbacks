@@ -1,0 +1,31 @@
+// Spacing
+$spacer: 1rem;
+$spacers: (
+  0: 0,
+  1: $spacer * 0.25,
+  2: $spacer * 0.5,
+  3: $spacer,
+  4: $spacer * 1.5,
+  5: $spacer * 3,
+  6: $spacer * 4.5,
+);
+
+// Border radius
+$border-radius-sm: 0.25rem;
+$border-radius: 0.5rem;
+$border-radius-lg: 1rem;
+$border-radius-xl: 1.5rem;
+$border-radius-pill: 50rem;
+
+// Box shadows
+$box-shadow-sm: 0 0.125rem 0.25rem rgba($dark, 0.075);
+$box-shadow: 0 0.5rem 1rem rgba($dark, 0.08);
+$box-shadow-lg: 0 1rem 3rem rgba($dark, 0.1);
+
+// App-specific
+$search-bg: $white;
+$card-bg: $white;
+$body-bg: $off-white;
+
+// Icon backgrounds
+$icon-bg-primary: $primary-light;

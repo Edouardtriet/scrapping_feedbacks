@@ -1,28 +1,69 @@
-// This is where you override default Bootstrap variables
-// 1. Find all Bootstrap variables that you can override at the end of each component's documentation under the `Sass variables` anchor
-// e.g. here are the ones you can override for the navbar https://getbootstrap.com/docs/5.2/components/navbar/#sass-variables
-// 2. These variables are defined with default value (see https://robots.thoughtbot.com/sass-default)
-// 3. You can override them below!
-
-// General style
-$font-family-sans-serif: $body-font;
-$headings-font-family:   $headers-font;
-$body-bg:                $light-gray;
-$font-size-base:         1rem;
+// Bootstrap variable overrides
+// Import the variables file first
+@import "colors";
+@import "fonts";
+@import "custom_variables";
 
 // Colors
-$body-color: $gray;
-$primary:    $blue;
-$success:    $green;
-$info:       $yellow;
-$danger:     $red;
-$warning:    $orange;
+$primary: $primary;
+$secondary: $secondary;
+$body-bg: $off-white;
+$body-color: $dark;
 
-// Buttons & inputs' radius
-$border-radius-sm:            .0625rem;
-$border-radius:               .125rem;
-$border-radius-lg:            .25rem;
-$border-radius-xl:            .5rem;
-$border-radius-xxl:           1rem;
+// Typography
+$font-family-sans-serif: $font-family-base;
+$font-size-base: $font-size-base;
 
-// Override other variables below!
+// Headings
+$headings-font-weight: $font-weight-bold;
+$headings-color: $dark;
+$headings-margin-bottom: $spacer;
+
+// Components
+$border-radius: $border-radius;
+$border-radius-lg: $border-radius-lg;
+$border-radius-sm: $border-radius-sm;
+
+// Cards
+$card-border-width: 0;
+$card-border-radius: $border-radius-lg;
+$card-box-shadow: $box-shadow;
+$card-bg: $white;
+$card-cap-bg: transparent;
+
+// Buttons
+$btn-font-weight: $font-weight-medium;
+$btn-padding-y: $spacer * 0.6;
+$btn-padding-x: $spacer * 1.5;
+$btn-border-radius: $border-radius-pill;
+
+// Search form (seen in the screenshot)
+$input-bg: $white;
+$input-border-width: 0;
+$input-placeholder-color: $light;
+$input-border-radius: $border-radius-pill;
+$input-padding-y: $spacer * 0.8;
+$input-padding-x: $spacer * 1.5;
+$input-box-shadow: $box-shadow-sm;
+
+// Container padding
+$container-padding-x: $spacer * 1.5;
+
+// Enable shadows and rounded corners
+$enable-shadows: true;
+$enable-rounded: true;
+
+// Custom navbar styles for the app header
+$navbar-padding-y: $spacer * 1.2;
+$navbar-padding-x: $spacer * 2;
+$navbar-brand-font-size: $h5-font-size;
+$navbar-brand-font-weight: $font-weight-bold;
+$navbar-brand-padding-y: 0;
+
+// Features section (the three circular icons with text)
+$feature-icon-size: 3rem;
+$feature-icon-bg-size: 4.5rem;
+$feature-title-font-size: 1.2rem;
+$feature-title-font-weight: $font-weight-bold;
+$feature-text-font-size: 0.9rem;
+$feature-text-color: $medium;
