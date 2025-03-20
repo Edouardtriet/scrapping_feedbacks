@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
+  get 'searches/index'
+  get 'searches/show'
+  get 'searches/new'
+  get 'searches/create'
   devise_for :users
   root to: "pages#home"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
