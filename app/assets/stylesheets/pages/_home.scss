@@ -1,1 +1,102 @@
-// Specific CSS for your home-page
+// Main container
+.main-container {
+  max-width: 1000px;
+  padding-top: 2rem;
+
+  h1 {
+    font-weight: $font-weight-bold;
+    color: $dark;
+  }
+
+  .lead {
+    color: $medium;
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+}
+
+// Search container
+.search-container {
+  margin-top: 3rem;
+
+  .search-wrapper {
+    width: 100%;
+    max-width: 580px;
+  }
+
+  .search-input {
+    border-radius: $border-radius-pill;
+    padding: 1.2rem 1.5rem 1.2rem 3rem;
+    box-shadow: $box-shadow;
+    border: none;
+    background-color: $white;
+
+    &::placeholder {
+      color: $light;
+    }
+
+    &:focus {
+      box-shadow: $box-shadow;
+      border-color: transparent;
+    }
+  }
+
+  .search-icon {
+    left: 1.2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $light;
+  }
+}
+
+// Features section
+.features-section {
+  margin-top: 3rem;
+
+  .feature {
+    padding: 1.5rem;
+
+    .feature-icon-wrapper {
+      height: 4.5rem;
+      width: 4.5rem;
+
+      .feature-icon-bg {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+
+        i {
+          font-size: 1.5rem;
+        }
+      }
+    }
+
+    .sentiment-icon-bg {
+      background-color: $primary-light;
+      color: $feature-sentiment;
+    }
+
+    .insights-icon-bg {
+      background-color: rgba($feature-insights, 0.1);
+      color: $feature-insights;
+    }
+
+    .action-icon-bg {
+      background-color: rgba($feature-action, 0.1);
+      color: $feature-action;
+    }
+
+    .feature-title {
+      font-size: 1.2rem;
+      font-weight: $font-weight-bold;
+      color: $dark;
+    }
+
+    .feature-description {
+      font-size: 0.9rem;
+      color: $medium;
+      line-height: 1.6;
+    }
+  }
+}
