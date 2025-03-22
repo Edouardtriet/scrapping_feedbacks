@@ -1,0 +1,48 @@
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Review Insights</h1>
+    <div class="text-muted">
+      Currently analyzing: <strong><%= @app.name %></strong>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <h3 class="mb-3">Review Insights</h3>
+      <p class="text-muted">Ask questions about the app reviews</p>
+
+      <div class="chat-container bg-light p-3 rounded mb-4">
+        <div class="chat-message">
+          <p>Welcome! Ask me anything about the app reviews or click on a suggested question to get started.</p>
+          <small class="text-muted">23:09</small>
+        </div>
+      </div>
+
+      <h5>Suggested questions:</h5>
+      <div class="suggested-questions mb-4">
+        <div class="row">
+          <div class="col-md-6 mb-2">
+            <button class="btn btn-outline-secondary w-100 text-start">What do users like most about this app?</button>
+          </div>
+          <div class="col-md-6 mb-2">
+            <button class="btn btn-outline-secondary w-100 text-start">What are the most common complaints?</button>
+          </div>
+          <div class="col-md-6 mb-2">
+            <button class="btn btn-outline-secondary w-100 text-start">How has sentiment changed in recent versions?</button>
+          </div>
+          <div class="col-md-6 mb-2">
+            <button class="btn btn-outline-secondary w-100 text-start">What features are users requesting?</button>
+          </div>
+          <div class="col-md-6 mb-2">
+            <button class="btn btn-outline-secondary w-100 text-start">Compare iOS vs Android reviews</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <input type="text" class="form-control" placeholder="Ask a question about the reviews...">
+        <button class="btn btn-primary">Send</button>
+      </div>
+    </div>
+  </div>
+</div>
