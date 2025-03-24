@@ -62,4 +62,28 @@ class SearchesController < ApplicationController
     @end_date = params[:end_date]
     @time_range = params[:time_range]
   end
+
+  def save_search
+    @app = App.find(params[:id])
+    @selected_countries = params[:countries] || []
+
+    if user_signed_in?
+      @search = current_user.searches.new(
+        app_name: @app.name,
+        store_type: @app.store_type,
+        country: @selected_countries.join(", "),
+        end_date: params[:end_date],
+        time_range: params[:time_range]
+      )
+
+      if @search.save
+        flash[:notice] = "Search saved successfully!"
+      else
+        flash[:alert] = "There was an error saving your search: #{@search.errors.full_messages.join(', ')}"
+      end
+    else
+      flash[:alert] = "You must be logged in to save your search."
+      redirect_to login_path
+    end
+  end
 end

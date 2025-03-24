@@ -10,6 +10,7 @@ Rails.application.routes.draw do
     member do
       get 'countries', to: 'searches#countries', as: :countries
       get 'timeframe', to: 'searches#timeframe', as: :timeframe
+      get 'save_search', to: 'searches#save_search', as: :save_search
       get 'analyze', to: 'searches#analyze', as: :analyze
     end
   end
