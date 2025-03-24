@@ -7,41 +7,59 @@ class SearchesController < ApplicationController
   ].freeze
 
   def index
-    @searches = current_user.searches.order(created_at: :desc)
+    if params[:query].present?
+      @app = App.find_by("name ILIKE ?", params[:query])
+      if @app
+        redirect_to countries_search_path(@app)
+        return
+      else
+        @apps = App.where("name ILIKE ?", "%#{params[:query]}%").limit(5)
+        if @apps.count == 1
+          redirect_to countries_search_path(@apps.first)
+          return
+        elsif @apps.empty?
+          # Array of fun messages
+          messages = [
+            "Hmm, I've never heard of '#{params[:query]}'. Are you sure that's a real app? Try something like 'Instagram' or 'TikTok' instead.",
+            "Oops! '#{params[:query]}' doesn't seem to exist in our universe. Try a popular app like 'WhatsApp' or 'Facebook'.",
+            "'#{params[:query]}'? Is that from the future? For now, try searching for apps like 'Snapchat' or 'YouTube'.",
+            "Sorry, I looked everywhere but couldn't find '#{params[:query]}'. How about trying 'Twitter' or 'Pinterest'?"
+          ]
+
+          flash[:alert] = messages.sample
+          redirect_to root_path
+          return
+        end
+      end
+    else
+      @apps = []
+    end
   end
 
   def show
-    @reviews = @search.reviews.order(created_at: :desc)
-    unless @search.user == current_user
-      redirect_to searches_path, alert: "You don't have access to this search"
-    end
+    @app = App.find(params[:id])
+    redirect_to countries_search_path(@app)
   end
 
-  def new
-    @search = Search.new
-    @countries = COUNTRIES
-    @recent_searches = current_user.searches.order(created_at: :desc).limit(5) if user_signed_in?
+  def suggestions
+    @apps = App.where("name ILIKE ?", "%#{params[:query]}%").limit(5)
+    render json: @apps.map { |app| { id: app.id, name: app.name, developer: app.developer, icon: app.icon_url } }
   end
 
-  def create
-    @search = current_user.searches.new(search_params)
-    if @search.save
-      redirect_to search_path(@search), notice: 'Analysis started successfully.'
-    else
-      @countries = COUNTRIES
-      render :new, status: :unprocessable_entity
-    end
+  def countries
+    @app = App.find(params[:id])
   end
 
-  private
-
-  def set_search
-    @search = Search.find(params[:id])
-  rescue ActiveRecord::RecordNotFound
-    redirect_to searches_path, alert: "Analysis not found"
+  def timeframe
+    @app = App.find(params[:id])
+    @selected_countries = params[:countries] || []
   end
 
-  def search_params
-    params.require(:search).permit(:app_name, :store_type, :country, :additional_countries, :start_date, :end_date)
+  def analyze
+    @app = App.find(params[:id])
+    @selected_countries = params[:countries] || []
+    @start_date = params[:start_date]
+    @end_date = params[:end_date]
+    @time_range = params[:time_range]
   end
 end

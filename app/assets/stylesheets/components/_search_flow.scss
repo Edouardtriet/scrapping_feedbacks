@@ -1,0 +1,126 @@
+// Card styles
+.card {
+  border-radius: $border-radius-lg;
+  border: none;
+  box-shadow: $box-shadow;
+}
+
+// Form styles
+.form-check-input:checked {
+  background-color: $primary;
+  border-color: $primary;
+}
+
+.btn-primary {
+  background-color: $primary;
+  border-color: $primary;
+
+  &:hover {
+    background-color: darken($primary, 10%);
+    border-color: darken($primary, 10%);
+  }
+}
+
+.btn-outline-secondary {
+  color: $medium;
+  border-color: $light;
+
+  &:hover {
+    background-color: $secondary;
+    color: $dark;
+    border-color: $light;
+  }
+}
+
+// Chat styles
+.chat-container {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.chat-message {
+  margin-bottom: 1rem;
+
+  p {
+    margin-bottom: 0.25rem;
+  }
+}
+
+.suggested-questions {
+  .btn {
+    text-align: left;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.5rem;
+  }
+}
+
+// App icon placeholder
+.app-icon-placeholder {
+  width: 80px;
+  height: 80px;
+  background-color: $primary-light;
+  border-radius: 16px;
+}
+
+// Tab navigation for timeframe selection
+.btn-group {
+  .btn-check:checked + .btn-outline-secondary {
+    background-color: $secondary;
+    color: $dark;
+    border-color: $light;
+  }
+}
+
+// Custom date picker styling
+.time-toggle {
+  background-color: $secondary;
+  border-radius: $border-radius-pill;
+  overflow: hidden;
+  padding: 2px;
+
+  .btn {
+    border-radius: $border-radius-pill;
+    border: none;
+    padding: 10px 0;
+    transition: all 0.2s ease;
+    font-weight: $font-weight-medium;
+
+    &:focus {
+      box-shadow: none;
+    }
+  }
+
+  .btn-check:checked + .btn {
+    background-color: $white;
+    color: $dark;
+    box-shadow: $box-shadow-sm;
+  }
+}
+
+// Date input styling
+.date-input {
+  border: 1px solid $light;
+  padding: 12px 15px;
+  border-radius: $border-radius;
+
+  &:focus {
+    border-color: $primary;
+    box-shadow: 0 0 0 0.2rem rgba($primary, 0.2);
+  }
+
+  &:disabled {
+    background-color: $secondary;
+    opacity: 0.7;
+  }
+}
+
+// Back/Next buttons
+.btn-primary {
+  padding: 12px 30px;
+  font-weight: $font-weight-medium;
+}
+
+.btn-outline-secondary {
+  padding: 12px 30px;
+  font-weight: $font-weight-medium;
+}

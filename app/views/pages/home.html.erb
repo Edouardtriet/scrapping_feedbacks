@@ -11,8 +11,21 @@
 
         <!-- Search bar -->
         <div class="search-container mb-5">
-          <%= link_to new_search_path, class: 'btn btn-primary btn-lg' do %>
-            <i class="fas fa-search me-2"></i> Start Your Analysis
+          <%= form_with url: search_path, method: :get, class: "d-flex justify-content-center", data: { controller: "search" } do |f| %>
+            <div class="position-relative search-wrapper">
+              <div class="search-icon position-absolute">
+                <i class="fas fa-search"></i>
+              </div>
+              <%= f.text_field :query,
+                              class: "form-control form-control-lg search-input ps-5",
+                              placeholder: "Make your first analysis",
+                              autocomplete: "off",
+                              data: {
+                                search_target: "input",
+                                action: "input->search#suggest keydown->search#handleKeydown"
+                              } %>
+              <div class="search-results" data-search-target="results"></div>
+            </div>
           <% end %>
         </div>
 

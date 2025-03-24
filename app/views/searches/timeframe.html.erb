@@ -1,0 +1,64 @@
+<div class="container py-4">
+  <div class="card p-4">
+    <h2 class="mb-4">Select Review Timeframe</h2>
+
+    <p class="text-muted mb-4">Choose the time period for the reviews you want to analyze</p>
+
+    <%= form_with url: analyze_search_path(@app), method: :get,
+                  data: {
+                    controller: "timeframe",
+                    action: "submit->timeframe#validateDates"
+                  } do |f| %>
+      <% @selected_countries.each do |country| %>
+        <%= f.hidden_field :countries, multiple: true, value: country %>
+      <% end %>
+
+      <div class="mb-4">
+        <div class="btn-group w-100 time-toggle" role="group">
+          <input type="radio" class="btn-check" name="time_range" id="all_time" value="all_time"
+                 autocomplete="off" checked
+                 data-timeframe-target="allTime"
+                 data-action="click->timeframe#toggleDateRange">
+          <label class="btn btn-outline-secondary" for="all_time">All Time</label>
+
+          <input type="radio" class="btn-check" name="time_range" id="custom_range" value="custom_range"
+                 autocomplete="off"
+                 data-timeframe-target="customRange"
+                 data-action="click->timeframe#toggleDateRange">
+          <label class="btn btn-outline-secondary" for="custom_range">Custom Range</label>
+        </div>
+      </div>
+
+      <div id="date_range_container" class="mb-4 d-none" data-timeframe-target="dateContainer">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="start_date" class="form-label">From Date</label>
+              <%= f.date_field :start_date,
+                               class: "form-control date-input",
+                               id: "start_date",
+                               value: 1.month.ago.strftime('%Y-%m-%d'),
+                               data: { timeframe_target: "dateInput" } %>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="end_date" class="form-label">To Date</label>
+              <%= f.date_field :end_date,
+                               class: "form-control date-input",
+                               id: "end_date",
+                               value: Date.today.strftime('%Y-%m-%d'),
+                               data: { timeframe_target: "dateInput" } %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-between mt-4">
+        <%= link_to "Back", countries_search_path(@app), class: "btn btn-outline-secondary" %>
+        <%= f.submit "Analyze Reviews", class: "btn btn-primary" %>
+      </div>
+    <% end %>
+  </div>
+</div>
