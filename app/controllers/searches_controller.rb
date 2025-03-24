@@ -1,4 +1,11 @@
 class SearchesController < ApplicationController
+  before_action :authenticate_user!, except: [:new, :create]
+  before_action :set_search, only: [:show]
+
+  COUNTRIES = [
+    "United States", "United Kingdom", "France", "Germany", "Spain"
+  ].freeze
+
   def index
     if params[:query].present?
       @app = App.find_by("name ILIKE ?", params[:query])
