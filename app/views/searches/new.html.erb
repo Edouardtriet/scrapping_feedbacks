@@ -1,2 +1,71 @@
-<h1>Searches#new</h1>
-<p>Find me in app/views/searches/new.html.erb</p>
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4 p-md-5">
+          <h1 class="fw-bold mb-3 text-center">Analyze App Reviews</h1>
+          <p class="text-center mb-5">Enter app details to get comprehensive review analysis and insights</p>
+
+          <%= simple_form_for @search do |f| %>
+            <%= f.error_notification class: "alert alert-danger" %>
+
+            <%= f.input :app_name,
+                        label: "App Name",
+                        label_html: { class: "fw-medium mb-2" },
+                        placeholder: "e.g. Instagram, TikTok, Spotify",
+                        input_html: { class: "form-control-lg" },
+                        required: true,
+                        wrapper_html: { class: "mb-4" } %>
+
+            <%= f.input :store_type,
+                        label: "App Store",
+                        label_html: { class: "fw-medium mb-2" },
+                        collection: [["Apple App Store", "apple"], ["Google Play Store", "google"], ["Both", "both"]],
+                        include_blank: false,
+                        input_html: { class: "form-select-lg" },
+                        wrapper_html: { class: "mb-4" } %>
+
+            <%= f.input :country,
+                        label: "Primary Country",
+                        label_html: { class: "fw-medium mb-2" },
+                        collection: @countries,
+                        prompt: "Select country",
+                        input_html: { class: "form-select-lg" },
+                        required: true,
+                        wrapper_html: { class: "mb-4" } %>
+
+            <%= f.input :additional_countries,
+                        label: "Additional Countries (Optional)",
+                        label_html: { class: "fw-medium mb-2" },
+                        placeholder: "e.g. US, UK, IN, JP (comma separated)",
+                        input_html: { class: "form-control-lg" },
+                        hint: "Leave blank to only analyze reviews from the primary country",
+                        wrapper_html: { class: "mb-4" } %>
+
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <%= f.input :start_date,
+                          label: "Start Date",
+                          label_html: { class: "fw-medium mb-2" },
+                          as: :date,
+                          html5: true,
+                          input_html: { class: "form-control-lg" } %>
+              </div>
+              <div class="col-md-6">
+                <%= f.input :end_date,
+                          label: "End Date",
+                          label_html: { class: "fw-medium mb-2" },
+                          as: :date,
+                          html5: true,
+                          input_html: { class: "form-control-lg" } %>
+              </div>
+            </div>
+
+            <%= f.button :submit, "Start Analysis",
+                        class: "btn btn-primary btn-lg w-100 mt-4 py-3" %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

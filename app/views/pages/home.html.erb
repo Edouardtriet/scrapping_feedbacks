@@ -11,15 +11,11 @@
 
         <!-- Search bar -->
         <div class="search-container mb-5">
-          <form class="d-flex justify-content-center">
-            <div class="position-relative search-wrapper">
-              <div class="search-icon position-absolute">
-                <i class="fas fa-search"></i>
-              </div>
-              <input class="form-control form-control-lg search-input ps-5" type="search" placeholder="Make your first analysis" aria-label="Search">
-            </div>
-          </form>
+          <%= link_to new_search_path, class: 'btn btn-primary btn-lg' do %>
+            <i class="fas fa-search me-2"></i> Start Your Analysis
+          <% end %>
         </div>
+
 
         <!-- Features section -->
         <div class="row features-section mt-5 pt-4">
