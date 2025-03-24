@@ -14,10 +14,53 @@
   </head>
 
   <body>
+    <% if flash[:alert] %>
+      <div class="toast-container position-fixed top-center p-3" style="z-index: 1050;">
+        <div class="custom-toast show" role="alert" aria-live="assertive" aria-atomic="true">
+          <div class="toast-content">
+            <div class="toast-icon">
+              <i class="fas fa-lightbulb"></i>
+            </div>
+            <div class="toast-message">
+              <%= flash[:alert] %>
+            </div>
+            <button type="button" class="toast-close" aria-label="Close">×</button>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          var toast = document.querySelector('.custom-toast');
+          var closeBtn = toast.querySelector('.toast-close');
+
+          // Add animation class after a short delay
+          setTimeout(function() {
+            toast.classList.add('bounce');
+          }, 300);
+
+          // Auto-hide after 6 seconds
+          setTimeout(function() {
+            toast.classList.add('toast-hiding');
+            setTimeout(function() {
+              toast.style.display = 'none';
+            }, 500);
+          }, 6000);
+
+          // Close on button click
+          closeBtn.addEventListener('click', function() {
+            toast.classList.add('toast-hiding');
+            setTimeout(function() {
+              toast.style.display = 'none';
+            }, 500);
+          });
+        });
+      </script>
+    <% end %>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light">
       <div class="container-fluid px-4">
-        <a class="navbar-brand d-flex align-items-center" href="#">
+        <a class="navbar-brand d-flex align-items-center" href="<%= root_path %>">
           <div class="brand-icon me-2 d-flex align-items-center justify-content-center">
             <i class="fas fa-chart-bar"></i>
           </div>
@@ -34,7 +77,6 @@
         </div>
       </div>
     </nav>
-
     <%= yield %>
   </body>
 </html>

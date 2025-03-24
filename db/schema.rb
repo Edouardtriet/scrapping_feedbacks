@@ -10,9 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_03_20_124540) do
+ActiveRecord::Schema[7.1].define(version: 2025_03_22_220534) do
+
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "apps", force: :cascade do |t|
+    t.string "name"
+    t.string "developer"
+    t.string "icon_url"
+    t.string "platform"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "countries", force: :cascade do |t|
     t.string "name"
@@ -35,11 +45,14 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_20_124540) do
   create_table "searches", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "store_type"
-    t.bigint "country_id", null: false
     t.string "app_name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["country_id"], name: "index_searches_on_country_id"
+    t.string "countries"
+    t.date "start_date"
+    t.date "end_date"
+    t.string "country"
+    t.string "additional_countries"
     t.index ["user_id"], name: "index_searches_on_user_id"
   end
 
@@ -56,6 +69,5 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_20_124540) do
   end
 
   add_foreign_key "reviews", "searches"
-  add_foreign_key "searches", "countries"
   add_foreign_key "searches", "users"
 end

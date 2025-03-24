@@ -11,15 +11,24 @@
 
         <!-- Search bar -->
         <div class="search-container mb-5">
-          <form class="d-flex justify-content-center">
+          <%= form_with url: search_path, method: :get, class: "d-flex justify-content-center", data: { controller: "search" } do |f| %>
             <div class="position-relative search-wrapper">
               <div class="search-icon position-absolute">
                 <i class="fas fa-search"></i>
               </div>
-              <input class="form-control form-control-lg search-input ps-5" type="search" placeholder="Make your first analysis" aria-label="Search">
+              <%= f.text_field :query,
+                              class: "form-control form-control-lg search-input ps-5",
+                              placeholder: "Make your first analysis",
+                              autocomplete: "off",
+                              data: {
+                                search_target: "input",
+                                action: "input->search#suggest keydown->search#handleKeydown"
+                              } %>
+              <div class="search-results" data-search-target="results"></div>
             </div>
-          </form>
+          <% end %>
         </div>
+
 
         <!-- Features section -->
         <div class="row features-section mt-5 pt-4">
@@ -33,7 +42,7 @@
               </div>
               <h3 class="feature-title mb-3">Analyze Sentiment</h3>
               <p class="feature-description">
-                Understand how users feel about your app across different countries and versions.
+                Understand how users feel about competitor's apps across different countries from online reviews.
               </p>
             </div>
           </div>
@@ -48,7 +57,7 @@
               </div>
               <h3 class="feature-title mb-3">Discover Insights</h3>
               <p class="feature-description">
-                Extract key insights and patterns from thousands of reviews in seconds.
+                See what features people love, and what they want to be improved
               </p>
             </div>
           </div>
@@ -63,7 +72,7 @@
               </div>
               <h3 class="feature-title mb-3">Take Action</h3>
               <p class="feature-description">
-                Make data-driven decisions to improve your app and boost user satisfaction.
+                Make data-driven decisions to make a better version than your competitors
               </p>
             </div>
           </div>
