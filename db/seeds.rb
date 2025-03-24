@@ -16,23 +16,44 @@ App.destroy_all
 puts "Creating sample apps..."
 App.create!(
   name: "WhatsApp",
-  developer: "Meta Platforms, Inc.",
-  icon_url: "https://play-lh.googleusercontent.com/bYtqbOcTYOlgc6gqZ2rwb8lptHuwlNE75zYJu6Bn076-hTmvd96HH-6v7S0YUAAJXoJN=w240-h480-rw",
-  platform: "android"
+  apple_id: "310633997",
+  google_id: "com.whatsapp",
 )
 
 App.create!(
-  name: "Instagram",
-  developer: "Meta Platforms, Inc.",
-  icon_url: "https://play-lh.googleusercontent.com/VRMWkE5p3CkWhJs6nv-9ZsLAs1QOg5ob1_3qg-rckwYW7yp1fMrYZqnEFpk0IoVP4LM=w240-h480-rw",
-  platform: "android"
+  name: "Spotify",
+  apple_id: "324684580",
+  google_id: "com.spotify.music",
 )
 
 App.create!(
-  name: "Telegram",
-  developer: "Telegram FZ-LLC",
-  icon_url: "https://play-lh.googleusercontent.com/ZU9cSsyIJZo6Oy7HTHiEPwZg0m2Crep-d5ZrfajqtsH-qgUXSqKpNA2FpPDTn-7qA5Q=w240-h480-rw",
-  platform: "android"
+  name: "Facebook",
+  apple_id: "284882215",
+  google_id: "com.facebook.katana",
+)
+
+App.create!(
+  name: "TikTok",
+  apple_id: "835599320",
+  google_id: "com.zhiliaoapp.musically",
+)
+
+App.create!(
+  name: "Netflix",
+  apple_id: "363590051",
+  google_id: "com.netflix.mediaclient",
+)
+
+App.create!(
+  name: "Twitter",
+  apple_id: "333903271",
+  google_id: "com.twitter.android",
+)
+
+App.create!(
+  name: "Pinterest",
+  apple_id: "429047995",
+  google_id: "com.pinterest",
 )
 
 puts "Created #{App.count} apps"
