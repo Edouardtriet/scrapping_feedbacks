@@ -1,6 +1,11 @@
 <div class="container py-4">
   <div class="card p-4">
-    <h2 class="mb-4">Select Countries to Analyze</h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="mb-0">Select Countries to Analyze</h2>
+      <div class="text-muted">
+        Current search: <strong><%= @app.name %></strong>
+      </div>
+    </div>
 
     <p class="text-muted mb-4">Choose which countries' app reviews you want to include in the analysis</p>
 
