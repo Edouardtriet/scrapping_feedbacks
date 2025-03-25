@@ -7,6 +7,7 @@ class SearchesController < ApplicationController
   ].freeze
 
   def index
+    @query = params[:query]
     if params[:query].present?
       @app = App.find_by("name ILIKE ?", params[:query])
       if @app
@@ -84,6 +85,24 @@ class SearchesController < ApplicationController
     else
       flash[:alert] = "You must be logged in to save your search."
       redirect_to login_path
+    end
+  end
+
+  def autocomplete
+    query = params[:query]
+
+    # Ensure the query is at least 2 characters long
+    if query.length >= 2
+      # Use the model method to get autocomplete suggestions
+      suggestions = Search.autocomplete_apps(query)
+
+      respond_to do |format|
+        format.json { render json: suggestions }
+      end
+    else
+      respond_to do |format|
+        format.json { render json: [] }
+      end
     end
   end
 end

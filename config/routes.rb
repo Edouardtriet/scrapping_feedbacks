@@ -6,6 +6,9 @@ Rails.application.routes.draw do
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   get 'search', to: 'searches#index', as: :search
   get 'searches/suggestions', to: 'searches#suggestions'
+
+  get 'searches/autocomplete', to: 'searches#autocomplete'
+
   resources :searches, only: [:show] do
     member do
       get 'countries', to: 'searches#countries', as: :countries
