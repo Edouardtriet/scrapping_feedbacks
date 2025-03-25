@@ -11,7 +11,7 @@
       <h3 class="mb-3">Review Insights</h3>
       <p class="text-muted">Ask questions about the app reviews</p>
 
-      <div class="chat-container bg-light p-3 rounded mb-4">
+      <div class="chat-container bg-primary p-3 rounded mb-4" id="chat-messages">
         <div class="chat-message">
           <p>Welcome! Ask me anything about the app reviews or click on a suggested question to get started.</p>
           <small class="text-muted">23:09</small>
@@ -22,27 +22,173 @@
       <div class="suggested-questions mb-4">
         <div class="row">
           <div class="col-md-6 mb-2">
-            <button class="btn btn-outline-secondary w-100 text-start">What do users like most about this app?</button>
+            <button class="btn btn-outline-secondary w-100 text-start" onclick="showResponse('What do users like most about this app?')">What do users like most about this app?</button>
           </div>
           <div class="col-md-6 mb-2">
-            <button class="btn btn-outline-secondary w-100 text-start">What are the most common complaints?</button>
+            <button class="btn btn-outline-secondary w-100 text-start" onclick="showResponse('What are the most common complaints?')">What are the most common complaints?</button>
           </div>
           <div class="col-md-6 mb-2">
-            <button class="btn btn-outline-secondary w-100 text-start">How has sentiment changed in recent versions?</button>
+            <button class="btn btn-outline-secondary w-100 text-start" onclick="showResponse('How has sentiment changed in recent versions?')">How has sentiment changed in recent versions?</button>
           </div>
           <div class="col-md-6 mb-2">
-            <button class="btn btn-outline-secondary w-100 text-start">What features are users requesting?</button>
+            <button class="btn btn-outline-secondary w-100 text-start" onclick="showResponse('What features are users requesting?')">What features are users requesting?</button>
           </div>
           <div class="col-md-6 mb-2">
-            <button class="btn btn-outline-secondary w-100 text-start">Compare iOS vs Android reviews</button>
+            <button class="btn btn-outline-secondary w-100 text-start" onclick="showResponse('Compare iOS vs Android reviews')">Compare iOS vs Android reviews</button>
           </div>
         </div>
       </div>
 
       <div class="input-group">
-        <input type="text" class="form-control" placeholder="Ask a question about the reviews...">
-        <button class="btn btn-primary">Send</button>
+        <input type="text" class="form-control" id="user-input" placeholder="Ask a question about the reviews...">
+        <button class="btn btn-primary" onclick="handleUserInput()">Send</button>
       </div>
     </div>
   </div>
 </div>
+
+<script>
+  // This function creates a typing effect for text
+  // Parameters:
+  // - element: where to show the text
+  // - text: what text to type out
+  // - speed: how fast to type (in milliseconds, lower = faster)
+  function typeMessage(element, text, speed = 50) {
+    let index = 0;
+    let displayText = '';
+    element.innerHTML = '<p></p>';
+    
+    function type() {
+      if (index < text.length) {
+        displayText += text.charAt(index);
+        element.querySelector('p').innerHTML = displayText;
+        index++;
+        setTimeout(type, speed);
+      }
+    }
+    
+    type();
+  }
+
+  // This function handles what happens when a question button is clicked
+  function showResponse(question) {
+    // Dictionary of questions and their corresponding answers
+    // You can modify these responses to show different text
+    const responses = {
+      'What do users like most about this app?': `<p>Based on my analysis of the Spotify app reviews from the Apple Store, here are the top features users like most:</p>
+<p><strong>Most Appreciated Features</strong></p>
+<p>1. Playlists - The most mentioned positive feature (1,167 mentions in 4-5 star reviews), users love Spotify's playlist functionality, including creating, sharing, and discovering playlists.</p>
+<p>2. Premium Subscription Benefits - Many users (638 mentions) highlight premium features as major advantages, particularly:</p>
+<p style="margin-left: 20px">• No advertisements</p>
+<p style="margin-left: 20px">• Unlimited song skipping</p>
+<p style="margin-left: 20px">• Offline listening/downloads</p>
+<p style="margin-left: 20px">• Higher sound quality</p>
+<p>3. Music Listening Experience - Users value the overall listening experience (509 mentions), praising the app's core functionality.</p>
+<p>4. Artist Discovery - Finding and following favorite artists is important to many users (349 mentions).</p>
+<p>5. Shuffle Functionality - The shuffle feature receives significant positive feedback (309 mentions).</p>
+<p>6. Download Capability - The ability to download music for offline listening is highly valued (285 mentions).</p>
+<p>7. User Interface - Many users appreciate the app's UI design and navigation (282 mentions).</p>
+<p>8. Podcast Integration - Podcast functionality is a standout feature (243 mentions in positive reviews), showing how Spotify has successfully expanded beyond music.</p>
+<p>9. Search Functionality - Users appreciate being able to easily find music (235 mentions).</p>
+<p>10. Recommendations - Spotify's suggestion algorithms receive positive feedback (187 mentions).</p>
+<p><strong>Other Appreciated Elements:</strong></p>
+<p style="margin-left: 20px">• Lyrics - The lyrics feature is mentioned positively in 123 reviews</p>
+<p style="margin-left: 20px">• Radio Functionality - Mentioned positively in 106 reviews</p>
+<p style="margin-left: 20px">• Sound Quality - Praised in 92 reviews</p>
+<p style="margin-left: 20px">• Discovery Features - Users specifically mention discovery features (79 mentions)</p>
+<p style="margin-left: 20px">• Social Features - The ability to share music and follow friends is valued (128 friend-related mentions)</p>
+<p><strong>Overall Rating:</strong><br>
+Most users rate the app positively with 1,564 five-star and 750 four-star reviews out of 3,640 total reviews.</p>`,
+      'What are the most common complaints?': 'The main issues reported are occasional crashes during heavy usage and some users experiencing slow loading times. A few users also mentioned difficulty with the login process.',
+      'How has sentiment changed in recent versions?': 'Sentiment has improved significantly in the latest version (2.1.0), with users praising the bug fixes and new features. The average rating has increased from 4.2 to 4.5 stars.',
+      'What features are users requesting?': 'Users are most commonly requesting dark mode, offline functionality, and the ability to sync data across devices. Many also want more customization options.',
+      'Compare iOS vs Android reviews': 'iOS users generally rate the app higher (4.6 stars) compared to Android users (4.2 stars). iOS users particularly appreciate the smooth animations, while Android users value the customization options.'
+    };
+
+    // Get the chat container where we'll show messages
+    const chatMessages = document.getElementById('chat-messages');
+    // Get current time in HH:MM format
+    const currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    // Add the user's question to the chat
+    // bg-white: white background
+    // text-dark: dark text color
+    // mt-2: margin top for spacing
+    chatMessages.innerHTML += `
+      <div class="chat-message bg-white text-dark mt-2">
+        <p>${question}</p>
+        <small class="text-muted">${currentTime}</small>
+      </div>
+    `;
+
+    // Wait 500ms (half a second) before showing the response
+    // This creates a small delay between question and answer
+    setTimeout(() => {
+      // Create a new div for the response
+      const responseDiv = document.createElement('div');
+      // Style the response message
+      // bg-primary: orange background (using your theme color)
+      // text-white: white text
+      // mt-2: margin top for spacing
+      responseDiv.className = 'chat-message bg-primary text-white mt-2';
+      // Add the timestamp
+      responseDiv.innerHTML = `<small class="text-muted">${currentTime}</small>`;
+      // Add the response div to the chat
+      chatMessages.appendChild(responseDiv);
+      
+      // Start typing out the response
+      // CHANGE THIS NUMBER to adjust typing speed:
+      // - 20 = very fast
+      // - 50 = medium (current setting)
+      // - 100 = slow
+      // - 200 = very slow
+      typeMessage(responseDiv, responses[question], 10);
+      
+      // Scroll to the bottom of the chat
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }, 500);
+  }
+
+  // Add this new function to handle user input
+  function handleUserInput() {
+    const input = document.getElementById('user-input');
+    const question = input.value.trim();
+    
+    if (question) {
+      // Add the user's question to the chat
+      const chatMessages = document.getElementById('chat-messages');
+      const currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      
+      chatMessages.innerHTML += `
+        <div class="chat-message bg-white text-dark mt-2">
+          <p>${question}</p>
+          <small class="text-muted">${currentTime}</small>
+        </div>
+      `;
+
+      // Clear the input field
+      input.value = '';
+
+      // Show the response after a short delay
+      setTimeout(() => {
+        const responseDiv = document.createElement('div');
+        responseDiv.className = 'chat-message bg-primary text-white mt-2';
+        responseDiv.innerHTML = `<small class="text-muted">${currentTime}</small>`;
+        chatMessages.appendChild(responseDiv);
+        
+        // Here's where you can customize the response
+        const response = "Thank you for your question! I'm analyzing the reviews to provide you with the most relevant information. This is a demo response that you can customize.";
+        
+        typeMessage(responseDiv, response, 10);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }, 500);
+    }
+  }
+
+  // Add event listener for Enter key
+  document.getElementById('user-input').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      handleUserInput();
+    }
+  });
+</script>
