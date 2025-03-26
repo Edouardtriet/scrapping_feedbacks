@@ -9,19 +9,9 @@ class SearchesController < ApplicationController
 
   def show
     @search = current_user.searches.find_or_initialize_by(id: session[:current_search_id])
-
-    @countries = [
-      { code: 'US', name: 'United States' },
-      { code: 'GB', name: 'United Kingdom' },
-      { code: 'FR', name: 'France' },
-      { code: 'DE', name: 'Germany' },
-      { code: 'ES', name: 'Spain' },
-      { code: 'CA', name: 'Canada' }
-    ]
-
+    set_countries
     # Initialize select_all. It's checked if ALL countries are in additional_countries
     @select_all = @search.additional_countries.present? && (@countries.map { |c| c[:code] }.sort == @search.additional_countries.sort)
-
     render_wizard
   end
 
@@ -30,7 +20,7 @@ class SearchesController < ApplicationController
 
     # Set current_step for validations
     @search.current_step = step
-
+    set_countries
     # Handle "Select All" checkbox
     if params[:search][:select_all] == '1'
       params[:search][:additional_countries] = @countries.map { |c| c[:code] }
@@ -80,6 +70,17 @@ class SearchesController < ApplicationController
       :start_date,
       :end_date,
     )
+  end
+
+  def set_countries
+    @countries = [
+      { code: 'US', name: 'United States' },
+      { code: 'GB', name: 'United Kingdom' },
+      { code: 'FR', name: 'France' },
+      { code: 'DE', name: 'Germany' },
+      { code: 'ES', name: 'Spain' },
+      { code: 'CA', name: 'Canada' }
+    ]
   end
 
 end

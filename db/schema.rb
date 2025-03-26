@@ -10,8 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-
-ActiveRecord::Schema[7.1].define(version: 2025_03_24_182520) do
+ActiveRecord::Schema[7.1].define(version: 2025_03_26_124504) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -47,11 +46,12 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_24_182520) do
     t.string "app_name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "countries"
     t.date "start_date"
     t.date "end_date"
     t.string "country"
     t.string "additional_countries"
+    t.string "google_id"
+    t.string "apple_id"
     t.index ["user_id"], name: "index_searches_on_user_id"
   end
 

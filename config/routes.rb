@@ -4,8 +4,6 @@ Rails.application.routes.draw do
 
   resources :searches do
     member do
-      get 'countries'
-      get 'timeframe'
       get 'save_search'
       get 'analyze'
     end
