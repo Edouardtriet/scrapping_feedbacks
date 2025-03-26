@@ -2,17 +2,17 @@
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h1>Review Insights</h1>
     <div class="text-muted">
-      Results for: <strong><%= @app.name %></strong>
+    <!-- here we hardcoded, we will in the future just use the review.count -->
+      4560 Results for: <strong><%= @app.name %></strong>
     </div>
   </div>
 
   <div class="card mb-4">
     <div class="card-body">
 
-      <div class="chat-container bg-primary p-3 rounded mb-4" id="chat-messages">
-        <div class="chat-message">
+      <div class="chat-container bg-off-white p-3 rounded mb-4" id="chat-messages">
+        <div class="chat-message bg-white text-dark rounded border p-3">
           <p>Welcome! Ask me anything about the app reviews or click on a suggested question to get started.</p>
-          <small class="text-muted"><%= Time.current.strftime("%H:%M") %></small>
         </div>
       </div>
 
@@ -109,38 +109,24 @@ Most users rate the app positively with 1,564 five-star and 750 four-star review
     const currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
     // Add the user's question to the chat
-    // bg-white: white background
-    // text-dark: dark text color
-    // mt-2: margin top for spacing
     chatMessages.innerHTML += `
-      <div class="chat-message bg-white text-dark mt-2">
+      <div class="chat-message bg-primary text-white rounded border p-3 mt-2">
         <p>${question}</p>
-        <small class="text-muted">${currentTime}</small>
       </div>
     `;
 
     // Wait 500ms (half a second) before showing the response
-    // This creates a small delay between question and answer
     setTimeout(() => {
       // Create a new div for the response
       const responseDiv = document.createElement('div');
-      // Style the response message
-      // bg-primary: orange background (using your theme color)
-      // text-white: white text
-      // mt-2: margin top for spacing
-      responseDiv.className = 'chat-message bg-primary text-white mt-2';
-      // Add the timestamp
-      responseDiv.innerHTML = `<small class="text-muted">${currentTime}</small>`;
+      // Style the response message with border and padding
+      responseDiv.className = 'chat-message bg-white text-dark rounded border p-3 mt-2';
+      responseDiv.innerHTML = '<p></p>';
       // Add the response div to the chat
       chatMessages.appendChild(responseDiv);
       
       // Start typing out the response
-      // CHANGE THIS NUMBER to adjust typing speed:
-      // - 20 = very fast
-      // - 50 = medium (current setting)
-      // - 100 = slow
-      // - 200 = very slow
-      typeMessage(responseDiv, responses[question], 10);
+      typeMessage(responseDiv, responses[question], 3);
       
       // Scroll to the bottom of the chat
       chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -158,9 +144,8 @@ Most users rate the app positively with 1,564 five-star and 750 four-star review
       const currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       
       chatMessages.innerHTML += `
-        <div class="chat-message bg-white text-dark mt-2">
+        <div class="chat-message bg-primary text-white rounded border p-3 mt-2">
           <p>${question}</p>
-          <small class="text-muted">${currentTime}</small>
         </div>
       `;
 
@@ -170,8 +155,8 @@ Most users rate the app positively with 1,564 five-star and 750 four-star review
       // Show the response after a short delay
       setTimeout(() => {
         const responseDiv = document.createElement('div');
-        responseDiv.className = 'chat-message bg-primary text-white mt-2';
-        responseDiv.innerHTML = `<small class="text-muted">${currentTime}</small>`;
+        responseDiv.className = 'chat-message bg-white text-dark rounded border p-3 mt-2';
+        responseDiv.innerHTML = '<p></p>';
         chatMessages.appendChild(responseDiv);
         
         // Here's where you can customize the response
