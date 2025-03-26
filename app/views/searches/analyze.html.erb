@@ -18,21 +18,12 @@
 
       <h5>Suggested questions:</h5>
       <div class="suggested-questions mb-4">
-        <div class="row">
+        <div class="row" id="questions-container">
           <div class="col-md-6 mb-2">
             <button class="btn btn-outline-secondary w-100 text-start" onclick="showResponse('What do users like most about this app?')">What do users like most about this app?</button>
           </div>
           <div class="col-md-6 mb-2">
             <button class="btn btn-outline-secondary w-100 text-start" onclick="showResponse('What are the most common complaints?')">What are the most common complaints?</button>
-          </div>
-          <div class="col-md-6 mb-2">
-            <button class="btn btn-outline-secondary w-100 text-start" onclick="showResponse('How has sentiment changed in recent versions?')">How has sentiment changed in recent versions?</button>
-          </div>
-          <div class="col-md-6 mb-2">
-            <button class="btn btn-outline-secondary w-100 text-start" onclick="showResponse('What features are users requesting?')">What features are users requesting?</button>
-          </div>
-          <div class="col-md-6 mb-2">
-            <button class="btn btn-outline-secondary w-100 text-start" onclick="showResponse('Compare iOS vs Android reviews')">Compare iOS vs Android reviews</button>
           </div>
         </div>
       </div>
@@ -46,6 +37,51 @@
 </div>
 
 <script>
+  // Array of all available questions
+  const allQuestions = [
+    'What do users like most about this app?',
+    'What are the most common complaints?',
+    'How has sentiment changed in recent versions?',
+    'What features are users requesting?',
+    'Compare iOS vs Android reviews'
+  ];
+
+  // Keep track of which questions are currently displayed
+  let currentQuestionIndices = [0, 1];
+
+  // Function to get a random question that isn't currently displayed
+  function getNewQuestionIndex() {
+    const availableIndices = allQuestions
+      .map((_, index) => index)
+      .filter(index => !currentQuestionIndices.includes(index));
+    
+    if (availableIndices.length === 0) return null;
+    
+    const randomIndex = Math.floor(Math.random() * availableIndices.length);
+    return availableIndices[randomIndex];
+  }
+
+  // Function to update the question buttons
+  function updateQuestionButtons(clickedQuestion) {
+    const clickedIndex = allQuestions.indexOf(clickedQuestion);
+    const buttonIndex = currentQuestionIndices.indexOf(clickedIndex);
+    
+    if (buttonIndex !== -1) {
+      const newQuestionIndex = getNewQuestionIndex();
+      if (newQuestionIndex !== null) {
+        currentQuestionIndices[buttonIndex] = newQuestionIndex;
+        
+        // Update the button
+        const questionsContainer = document.getElementById('questions-container');
+        const buttons = questionsContainer.getElementsByTagName('button');
+        buttons[buttonIndex].textContent = allQuestions[newQuestionIndex];
+        buttons[buttonIndex].onclick = function() {
+          showResponse(allQuestions[newQuestionIndex]);
+        };
+      }
+    }
+  }
+
   // This function creates a typing effect for text
   // Parameters:
   // - element: where to show the text
@@ -70,6 +106,9 @@
 
   // This function handles what happens when a question button is clicked
   function showResponse(question) {
+    // First update the question buttons
+    updateQuestionButtons(question);
+
     // Dictionary of questions and their corresponding answers
     // You can modify these responses to show different text
     const responses = {
