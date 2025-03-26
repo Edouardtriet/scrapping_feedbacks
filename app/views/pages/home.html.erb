@@ -10,29 +10,22 @@
         </p>
 
         <!-- Search bar -->
-        <div class="search-container mb-5">
-          <%= form_with url: search_path, method: :get, class: "d-flex justify-content-center", data: { controller: "autocomplete",
-                action: "input->autocomplete#search keydown->autocomplete#handleKeydown" } do |f| %>
+        <%= simple_form_for :search, url: searches_path, method: :post do |f| %>
+          <div class="search-container mb-5">
             <div class="position-relative search-wrapper w-100">
               <div class="search-icon position-absolute">
                 <i class="fas fa-search"></i>
               </div>
-              <%= f.text_field :query,
-                              class: "form-control form-control-lg search-input ps-5",
-                              placeholder: "Make your first analysis",
-                              autocomplete: "off",
-                              data: {
-                                autocomplete_target: "input"
-                              } %>
-              <div class="search-results">
-               <div
-                 data-autocomplete-target="suggestions"
-                 class="autocomplete-suggestions"
-               ></div>
-              </div>
+              <%= f.input :app_name,
+                          label: false,
+                          placeholder: "Make your first analysis",
+                          input_html: {
+                            class: "form-control form-control-lg search-input ps-5"
+                          } %>
+              <%= f.button :submit, "Analyze", class: "btn btn-primary" %>
             </div>
-          <% end %>
-        </div>
+          </div>
+        <% end %>
 
 
         <!-- Features section -->

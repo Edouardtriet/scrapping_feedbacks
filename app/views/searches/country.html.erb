@@ -1,0 +1,62 @@
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4 p-md-5">
+          <h1 class="fw-bold mb-3 text-center">Select Country</h1>
+          <p class="text-center mb-5">Choose the primary country for your app review analysis</p>
+
+          <%= simple_form_for @search, url: wizard_path, method: :put do |f| %>
+            <% if @search.errors.any? %>
+              <div class="alert alert-danger">
+                <h4><%= pluralize(@search.errors.count, "error") %> prohibited this search from being saved:</h4>
+                <ul>
+                  <% @search.errors.full_messages.each do |message| %>
+                    <li><%= message %></li>
+                  <% end %>
+                </ul>
+              </div>
+            <% end %>
+
+            <%= f.input :country,
+                        label: "Primary Country",
+                        label_html: { class: "fw-medium mb-2" },
+                        collection: @countries.map { |c| [c[:name], c[:code]] }, # or [c[:name], c[:code]]
+                        prompt: "Select country",
+                        input_html: { class: "form-select-lg" },
+                        required: true,
+                        wrapper_html: { class: "mb-4" } %>
+
+            <h3>Choose which countries' app reviews you want to include in the analysis</h3>
+
+            <div class="form-check mb-3">
+              <%= f.check_box :select_all,
+                              class: "form-check-input",
+                              checked: @select_all,
+                              label: "Select All Countries" %>
+            </div>
+
+            <% @countries.each do |country| %>
+              <div class="form-check form-check-inline mb-3">
+                <%= f.check_box :additional_countries,
+                                multiple: true,
+                                value: country[:code],
+                                id: "additional_#{country[:code]}",
+                                class: "form-check-input",
+                                checked: @search.additional_countries&.include?(country[:code]) %>
+                <label class="form-check-label" for="additional_<%= country[:code] %>">
+                  <%= country[:code] %> <%= country[:name] %>
+                </label>
+              </div>
+            <% end %>
+
+            <div class="d-flex justify-content-between mt-4">
+              <%= f.button :submit, "Previous", name: "previous", class: "btn btn-secondary btn-lg" %>
+              <%= f.button :submit, "Next", class: "btn btn-primary btn-lg" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
