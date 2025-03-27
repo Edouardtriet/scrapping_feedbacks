@@ -1,108 +1,86 @@
+# app/controllers/searches_controller.rb
 class SearchesController < ApplicationController
-  before_action :authenticate_user!, except: [:new, :create]
-  before_action :set_search, only: [:show]
+  include Wicked::Wizard
 
-  COUNTRIES = [
-    "United States", "United Kingdom", "France", "Germany", "Spain"
-  ].freeze
+  steps :app_name, :store_type, :country, :timeframe
 
-  def index
-    @query = params[:query]
-    if params[:query].present?
-      @app = App.find_by("name ILIKE ?", params[:query])
-      if @app
-        redirect_to countries_search_path(@app)
-        return
-      else
-        @apps = App.where("name ILIKE ?", "%#{params[:query]}%").limit(5)
-        if @apps.count == 1
-          redirect_to countries_search_path(@apps.first)
-          return
-        elsif @apps.empty?
-          # Array of fun messages
-          messages = [
-            "Hmm, I've never heard of '#{params[:query]}'. Are you sure that's a real app? Try something like 'Instagram' or 'TikTok' instead.",
-            "Oops! '#{params[:query]}' doesn't seem to exist in our universe. Try a popular app like 'WhatsApp' or 'Facebook'.",
-            "'#{params[:query]}'? Is that from the future? For now, try searching for apps like 'Snapchat' or 'YouTube'.",
-            "Sorry, I looked everywhere but couldn't find '#{params[:query]}'. How about trying 'Twitter' or 'Pinterest'?"
-          ]
+  # Skip the wizard middleware for non-wizard actions
+  skip_before_action :setup_wizard, only: [:analyze, :index, :create]
 
-          flash[:alert] = messages.sample
-          redirect_to root_path
-          return
-        end
-      end
+  def show
+    @search = current_user.searches.find_or_initialize_by(id: session[:current_search_id])
+    set_countries
+    # Initialize select_all. It's checked if ALL countries are in additional_countries
+    @select_all = @search.additional_countries.present? && (@countries.map { |c| c[:code] }.sort == @search.additional_countries.sort)
+    render_wizard
+  end
+
+  def update
+    @search = current_user.searches.find_or_initialize_by(id: session[:current_search_id])
+
+    # Set current_step for validations
+    @search.current_step = step
+    set_countries
+    # Handle "Select All" checkbox
+    if params[:search][:select_all] == '1'
+      params[:search][:additional_countries] = @countries.map { |c| c[:code] }
+    elsif params[:search][:additional_countries].nil? # if no countries are selected
+      params[:search][:additional_countries] = []
+    end
+
+    @search.attributes = search_params
+
+    if @search.valid?
+      @search.save if @search.new_record?
+      session[:current_search_id] = @search.id
+      render_wizard @search
     else
-      @apps = []
+      render_wizard @search
     end
   end
 
-  def show
-    @app = App.find(params[:id])
-    redirect_to countries_search_path(@app)
-  end
-
-  def suggestions
-    @apps = App.where("name ILIKE ?", "%#{params[:query]}%").limit(5)
-    render json: @apps.map { |app| { id: app.id, name: app.name, developer: app.developer, icon: app.icon_url } }
-  end
-
-  def countries
-    @app = App.find(params[:id])
-  end
-
-  def timeframe
-    @app = App.find(params[:id])
-    @selected_countries = params[:countries] || []
+  def create
+    @search = current_user.searches.new
+    @search.current_step = steps.first
+    @search.save(validate: false)
+    session[:current_search_id] = @search.id
+    redirect_to wizard_path(steps.first, search_id: @search.id)
   end
 
   def analyze
-    @app = App.find(params[:id])
-    @selected_countries = params[:countries] || []
-    @start_date = params[:start_date]
-    @end_date = params[:end_date]
-    @time_range = params[:time_range]
+    @search = Search.find(params[:id])
+
+    render 'analyze'
   end
 
-  def save_search
-    @app = App.find(params[:id])
-    @selected_countries = params[:countries] || []
-
-    if user_signed_in?
-      @search = current_user.searches.new(
-        app_name: @app.name,
-        store_type: @app.store_type,
-        country: @selected_countries.join(", "),
-        end_date: params[:end_date],
-        time_range: params[:time_range]
-      )
-
-      if @search.save
-        flash[:notice] = "Search saved successfully!"
-      else
-        flash[:alert] = "There was an error saving your search: #{@search.errors.full_messages.join(', ')}"
-      end
-    else
-      flash[:alert] = "You must be logged in to save your search."
-      redirect_to login_path
-    end
+  def finish_wizard_path
+    search = Search.find(session[:current_search_id])
+    analyze_search_path(search)
   end
 
-  def autocomplete
-    query = params[:query]
+  private
 
-    # Ensure the query is at least 2 characters long
-    if query.length >= 2
-      # Use the model method to get autocomplete suggestions
-      suggestions = Search.autocomplete_apps(query)
-
-      respond_to do |format|
-        format.json { render json: suggestions }
-      end
-    else
-      respond_to do |format|
-        format.json { render json: [] }
-      end
-    end
+  def search_params
+    params.require(:search).permit(
+      :app_name,
+      :store_type,
+      :apple_id,
+      :google_id,
+      :country,
+      :start_date,
+      :end_date,
+    )
   end
+
+  def set_countries
+    @countries = [
+      { code: 'US', name: 'United States' },
+      { code: 'GB', name: 'United Kingdom' },
+      { code: 'FR', name: 'France' },
+      { code: 'DE', name: 'Germany' },
+      { code: 'ES', name: 'Spain' },
+      { code: 'CA', name: 'Canada' }
+    ]
+  end
+
 end

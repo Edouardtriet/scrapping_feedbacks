@@ -3,7 +3,7 @@
     <h1>Review Insights</h1>
     <div class="text-muted">
     <!-- here we hardcoded, we will in the future just use the review.count -->
-      4560 Results for: <strong><%= @app.name %></strong>
+      4560 Results for: <strong><%= @search.app_name %></strong>
     </div>
   </div>
 
@@ -54,9 +54,9 @@
     const availableIndices = allQuestions
       .map((_, index) => index)
       .filter(index => !currentQuestionIndices.includes(index));
-    
+
     if (availableIndices.length === 0) return null;
-    
+
     const randomIndex = Math.floor(Math.random() * availableIndices.length);
     return availableIndices[randomIndex];
   }
@@ -65,12 +65,12 @@
   function updateQuestionButtons(clickedQuestion) {
     const clickedIndex = allQuestions.indexOf(clickedQuestion);
     const buttonIndex = currentQuestionIndices.indexOf(clickedIndex);
-    
+
     if (buttonIndex !== -1) {
       const newQuestionIndex = getNewQuestionIndex();
       if (newQuestionIndex !== null) {
         currentQuestionIndices[buttonIndex] = newQuestionIndex;
-        
+
         // Update the button
         const questionsContainer = document.getElementById('questions-container');
         const buttons = questionsContainer.getElementsByTagName('button');
@@ -91,7 +91,7 @@
     let index = 0;
     let displayText = '';
     element.innerHTML = '<p></p>';
-    
+
     function type() {
       if (index < text.length) {
         displayText += text.charAt(index);
@@ -100,7 +100,7 @@
         setTimeout(type, speed);
       }
     }
-    
+
     type();
   }
 
@@ -163,10 +163,10 @@ Most users rate the app positively with 1,564 five-star and 750 four-star review
       responseDiv.innerHTML = '<p></p>';
       // Add the response div to the chat
       chatMessages.appendChild(responseDiv);
-      
+
       // Start typing out the response
       typeMessage(responseDiv, responses[question], 3);
-      
+
       // Scroll to the bottom of the chat
       chatMessages.scrollTop = chatMessages.scrollHeight;
     }, 500);
@@ -176,12 +176,12 @@ Most users rate the app positively with 1,564 five-star and 750 four-star review
   function handleUserInput() {
     const input = document.getElementById('user-input');
     const question = input.value.trim();
-    
+
     if (question) {
       // Add the user's question to the chat
       const chatMessages = document.getElementById('chat-messages');
       const currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      
+
       chatMessages.innerHTML += `
         <div class="chat-message bg-primary text-white rounded border p-3 mt-2">
           <p>${question}</p>
@@ -197,7 +197,7 @@ Most users rate the app positively with 1,564 five-star and 750 four-star review
         responseDiv.className = 'chat-message bg-white text-dark rounded border p-3 mt-2';
         responseDiv.innerHTML = '<p></p>';
         chatMessages.appendChild(responseDiv);
-        
+
         // Here's where you can customize the response
         const response = `<p>Based on my analysis of the Spotify reviews, here are the key features and improvements you should consider for a competitive music streaming service:</p>
 
@@ -240,7 +240,7 @@ Most users rate the app positively with 1,564 five-star and 750 four-star review
 <p><strong>10. Listening Stats and History</strong></p>
 <p style="margin-left: 20px">Users want more insights into their listening habits.</p>
 <p style="margin-left: 20px"><strong>Competitive Feature:</strong> Provide comprehensive listening statistics, not just year-end summaries, with detailed history, listening patterns, and the ability to revisit songs played in the past.</p>`;
-        
+
         typeMessage(responseDiv, response, 3);
         chatMessages.scrollTop = chatMessages.scrollHeight;
       }, 500);
