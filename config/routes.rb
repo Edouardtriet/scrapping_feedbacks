@@ -9,5 +9,8 @@ Rails.application.routes.draw do
     end
   end
 
+  # In config/routes.rb
+  get 'reviews_:id.csv', to: 'searches#download_csv'
+
   # Wizard routes are handled by the Wicked gem automatically
 end

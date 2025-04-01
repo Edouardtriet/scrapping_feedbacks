@@ -5,7 +5,7 @@ class SearchesController < ApplicationController
   steps :app_name, :store_type, :country, :timeframe
 
   # Skip the wizard middleware for non-wizard actions
-  skip_before_action :setup_wizard, only: [:analyze, :index, :create]
+  skip_before_action :setup_wizard, only: [:analyze, :index, :create, :download_csv]
 
   def show
     @search = current_user.searches.find_or_initialize_by(id: session[:current_search_id])
@@ -50,8 +50,36 @@ class SearchesController < ApplicationController
   def analyze
     @search = Search.find(params[:id])
 
+    # Define the output file path for the CSV
+    output_file = Rails.root.join("public", "reviews_#{@search.id}.csv")
+
+    # Call the Python script to generate the CSV file
+    app_id = @search.google_id || @search.apple_id # Use Google or Apple ID based on store type
+    script_path = Rails.root.join("lib", "scripts", "extract_reviews.py")
+
+    result = system("python3", script_path.to_s, app_id, output_file.to_s)
+
+    if result && File.exist?(output_file)
+      puts "File generated successfully: #{output_file}"
+      @csv_url = "/reviews_#{@search.id}.csv"
+    else
+      puts "Failed to generate file: #{output_file}"
+      @error_message = "Failed to generate CSV file. Please try again."
+    end
+
     render 'analyze'
   end
+
+  def download_csv
+    app_id = params[:id]
+    csv_data = `python3 path/to/your/script.py #{app_id} -`  # Output to stdout
+
+    send_data csv_data,
+              type: "text/csv",
+              filename: "reviews_#{app_id}.csv",
+              disposition: "attachment"
+  end
+
 
   def finish_wizard_path
     search = Search.find(session[:current_search_id])

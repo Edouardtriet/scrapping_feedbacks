@@ -10,6 +10,29 @@
   <div class="card mb-4">
     <div class="card-body">
 
+    <div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1>Review Insights</h1>
+      <div class="text-muted">
+        <!-- Example: Display app name dynamically -->
+        4560 Results for: <strong><%= @search.app_name %></strong>
+      </div>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-body">
+        <p>Welcome! Ask me anything about the app reviews or click on a suggested question to get started.</p>
+
+        <!-- Add download link for CSV file -->
+        <% if @csv_url %>
+          <a href="<%= @csv_url %>" class="btn btn-primary mt-3">Download Reviews as CSV</a>
+        <% else %>
+          <p class="text-danger">No CSV file available for download.</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
       <div class="chat-container bg-off-white p-3 rounded mb-4" id="chat-messages">
         <div class="chat-message bg-white text-dark rounded border p-3">
           <p>Welcome! Ask me anything about the app reviews or click on a suggested question to get started.</p>
