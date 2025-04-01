@@ -67,13 +67,22 @@ class SearchesController < ApplicationController
     
     output_file = Rails.root.join("public", "reviews_#{@search.id}.csv")
     script_path = Rails.root.join("lib", "scripts", "extract_reviews.py")
+    
+    # Find Python executable - try virtual env first, fall back to system Python
     venv_python = Rails.root.join(".venv", "bin", "python3")
+    python_cmd = if File.exist?(venv_python)
+                   venv_python.to_s
+                 elsif system("which python3 > /dev/null 2>&1")
+                   "python3"
+                 else
+                   "python"
+                 end
 
+    Rails.logger.info "Using Python: #{python_cmd}"
     Rails.logger.info "Script path exists? #{File.exist?(script_path)}"
-    Rails.logger.info "Venv python exists? #{File.exist?(venv_python)}"
     
     Rails.logger.info "Executing command:"
-    command = "#{venv_python} #{script_path} #{app_id} #{output_file}"
+    command = "#{python_cmd} #{script_path} #{app_id} #{output_file}"
     Rails.logger.info command
 
     # Capture output and errors
