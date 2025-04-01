@@ -62,9 +62,14 @@ class SearchesController < ApplicationController
     venv_python = Rails.root.join(".venv", "bin", "python3")
 
     Rails.logger.info "Executing command:"
-    Rails.logger.info "#{venv_python} #{script_path} #{app_id} #{output_file}"
+    command = "#{venv_python} #{script_path} #{app_id} #{output_file}"
+    Rails.logger.info command
 
-    result = system(venv_python.to_s, script_path.to_s, app_id, output_file.to_s)
+    # Capture output and errors
+    output = `#{command} 2>&1`
+    result = $?.success?
+    
+    Rails.logger.info "Command output: #{output}"
     Rails.logger.info "Command result: #{result}"
     Rails.logger.info "File exists? #{File.exist?(output_file)}"
 
