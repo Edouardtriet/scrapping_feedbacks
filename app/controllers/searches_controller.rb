@@ -50,6 +50,13 @@ class SearchesController < ApplicationController
   def analyze
     @search = Search.find(params[:id])
     app_id = @search.google_id || @search.apple_id
+    
+    # Check if app_id is present
+    if app_id.blank?
+      @error = "App ID is missing. Please make sure you've entered a valid Google Play or Apple App Store ID."
+      return
+    end
+    
     output_file = Rails.root.join("public", "reviews_#{@search.id}.csv")
     script_path = Rails.root.join("lib", "scripts", "extract_reviews.py")
     venv_python = Rails.root.join(".venv", "bin", "python3")
