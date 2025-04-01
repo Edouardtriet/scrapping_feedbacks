@@ -6,6 +6,7 @@ Rails.application.routes.draw do
     member do
       get 'save_search'
       get 'analyze'
+      get 'download_csv'
     end
   end
 

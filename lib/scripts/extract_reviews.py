@@ -43,6 +43,7 @@ def extract_reviews(app_id, output_file):
         print(f"Error creating file: {e}")
         import traceback
         traceback.print_exc()
+        sys.exit(1)
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:

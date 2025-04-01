@@ -49,29 +49,28 @@ class SearchesController < ApplicationController
 
   def analyze
     @search = Search.find(params[:id])
-
-    # Define the output file path for the CSV
+    app_id = @search.google_id || @search.apple_id
     output_file = Rails.root.join("public", "reviews_#{@search.id}.csv")
-
-    # Call the Python script to generate the CSV file
-    app_id = @search.google_id || @search.apple_id # Use Google or Apple ID based on store type
     script_path = Rails.root.join("lib", "scripts", "extract_reviews.py")
+    venv_python = Rails.root.join(".venv", "bin", "python3")
 
-    result = system("python3", script_path.to_s, app_id, output_file.to_s)
+    Rails.logger.info "Executing command:"
+    Rails.logger.info "#{venv_python} #{script_path} #{app_id} #{output_file}"
+
+    result = system(venv_python.to_s, script_path.to_s, app_id, output_file.to_s)
+    Rails.logger.info "Command result: #{result}"
+    Rails.logger.info "File exists? #{File.exist?(output_file)}"
 
     if result && File.exist?(output_file)
-      puts "File generated successfully: #{output_file}"
       @csv_url = "/reviews_#{@search.id}.csv"
     else
-      puts "Failed to generate file: #{output_file}"
-      @error_message = "Failed to generate CSV file. Please try again."
+      @error = "Failed to generate CSV file. Please try again."
     end
-
-    render 'analyze'
   end
 
   def download_csv
     app_id = params[:id]
+  raise
     csv_data = `python3 path/to/your/script.py #{app_id} -`  # Output to stdout
 
     send_data csv_data,
