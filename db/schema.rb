@@ -46,6 +46,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_26_124504) do
     t.string "app_name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "countries"
     t.date "start_date"
     t.date "end_date"
     t.string "country"

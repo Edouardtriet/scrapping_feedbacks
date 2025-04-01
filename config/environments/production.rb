@@ -4,6 +4,8 @@ Rails.application.configure do
   config.action_mailer.default_url_options = { host: "http://TODO_PUT_YOUR_DOMAIN_HERE" }
   # Settings specified here will take precedence over those in config/application.rb.
 
+  config.public_file_server.enabled = true
+
   # Code is not reloaded between requests.
   config.enable_reloading = false
 
