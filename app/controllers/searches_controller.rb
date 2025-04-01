@@ -49,17 +49,19 @@ class SearchesController < ApplicationController
 
   def analyze
     @search = Search.find(params[:id])
-    app_id = @search.google_id || @search.apple_id
+    
+    # Only use Google Play ID for now
+    app_id = @search.google_id
     
     # Debug information
     Rails.logger.info "Search ID: #{@search.id}"
-    Rails.logger.info "App ID: #{app_id}"
-    Rails.logger.info "Google ID: #{@search.google_id}"
-    Rails.logger.info "Apple ID: #{@search.apple_id}"
+    Rails.logger.info "App ID: #{app_id.inspect}"
+    Rails.logger.info "Google ID: #{@search.google_id.inspect}"
+    Rails.logger.info "Apple ID: #{@search.apple_id.inspect}"
     
     # Check if app_id is present
     if app_id.blank?
-      @error = "App ID is missing. Please make sure you've entered a valid Google Play or Apple App Store ID."
+      @error = "Google Play Store ID is missing. Please go back and enter a valid Google Play Store ID (e.g., com.spotify.music)."
       return
     end
     
@@ -85,7 +87,7 @@ class SearchesController < ApplicationController
     if result && File.exist?(output_file)
       @csv_url = "/reviews_#{@search.id}.csv"
     else
-      @error = "Failed to generate CSV file: #{output}"
+      @error = "Failed to generate CSV file. Error details: #{output}"
     end
   end
 
@@ -117,6 +119,7 @@ class SearchesController < ApplicationController
       :country,
       :start_date,
       :end_date,
+      additional_countries: []
     )
   end
 
