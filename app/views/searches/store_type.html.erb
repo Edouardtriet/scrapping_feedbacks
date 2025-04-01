@@ -30,23 +30,19 @@
                         input_html: { class: "form-select-lg" },
                         wrapper_html: { class: "mb-4" } %>
 
-            <% if @search.store_type == "apple" || @search.store_type == "both" %>
-              <%= f.input :apple_id,
-                          label: "Apple App Store ID",
-                          label_html: { class: "fw-medium mb-2" },
-                          hint: "Optional: Provide the specific Apple App Store ID if known",
-                          input_html: { class: "form-control-lg" },
-                          wrapper_html: { class: "mb-4" } %>
-            <% end %>
+            <%= f.input :apple_id,
+                      label: "Apple App Store ID",
+                      label_html: { class: "fw-medium mb-2" },
+                      hint: "Enter the specific Apple App Store ID (required for Apple Store)",
+                      input_html: { class: "form-control-lg" },
+                      wrapper_html: { class: "mb-4" } %>
 
-            <% if @search.store_type == "google" || @search.store_type == "both" %>
-              <%= f.input :google_id,
-                          label: "Google Play Store ID",
-                          label_html: { class: "fw-medium mb-2" },
-                          hint: "Optional: Provide the specific Google Play Store ID if known",
-                          input_html: { class: "form-control-lg" },
-                          wrapper_html: { class: "mb-4" } %>
-            <% end %>
+            <%= f.input :google_id,
+                      label: "Google Play Store ID",
+                      label_html: { class: "fw-medium mb-2" },
+                      hint: "Enter the specific Google Play Store ID (required for Google Play)",
+                      input_html: { class: "form-control-lg" },
+                      wrapper_html: { class: "mb-4" } %>
 
             <div class="d-flex justify-content-between">
               <%= f.button :submit, "Previous", name: "previous", class: "btn btn-secondary btn-lg" %>
