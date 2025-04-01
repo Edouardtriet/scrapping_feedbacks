@@ -51,6 +51,12 @@ class SearchesController < ApplicationController
     @search = Search.find(params[:id])
     app_id = @search.google_id || @search.apple_id
     
+    # Debug information
+    Rails.logger.info "Search ID: #{@search.id}"
+    Rails.logger.info "App ID: #{app_id}"
+    Rails.logger.info "Google ID: #{@search.google_id}"
+    Rails.logger.info "Apple ID: #{@search.apple_id}"
+    
     # Check if app_id is present
     if app_id.blank?
       @error = "App ID is missing. Please make sure you've entered a valid Google Play or Apple App Store ID."
@@ -61,6 +67,9 @@ class SearchesController < ApplicationController
     script_path = Rails.root.join("lib", "scripts", "extract_reviews.py")
     venv_python = Rails.root.join(".venv", "bin", "python3")
 
+    Rails.logger.info "Script path exists? #{File.exist?(script_path)}"
+    Rails.logger.info "Venv python exists? #{File.exist?(venv_python)}"
+    
     Rails.logger.info "Executing command:"
     command = "#{venv_python} #{script_path} #{app_id} #{output_file}"
     Rails.logger.info command
@@ -76,7 +85,7 @@ class SearchesController < ApplicationController
     if result && File.exist?(output_file)
       @csv_url = "/reviews_#{@search.id}.csv"
     else
-      @error = "Failed to generate CSV file. Please try again."
+      @error = "Failed to generate CSV file: #{output}"
     end
   end
 
