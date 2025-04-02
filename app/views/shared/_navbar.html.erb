@@ -1,38 +1,49 @@
-<div class="navbar navbar-expand-sm navbar-light navbar-lewagon">
-  <div class="container-fluid">
-    <%= link_to "#", class: "navbar-brand" do %>
-      <%= image_tag "https://raw.githubusercontent.com/lewagon/fullstack-images/master/uikit/logo.png" %>
+<nav class="navbar navbar-expand-lg navbar-light">
+  <div class="container-fluid px-4">
+    <%= link_to root_path, class: "navbar-brand d-flex align-items-center" do %>
+      <div class="brand-icon me-2 d-flex align-items-center justify-content-center">
+        <i class="fas fa-chart-bar"></i>
+      </div>
+      <span>AppInsights</span>
     <% end %>
-
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
     </button>
-
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav me-auto">
-        <% if user_signed_in? %>
-          <li class="nav-item active">
-            <%= link_to "Home", "#", class: "nav-link" %>
-          </li>
-          <li class="nav-item">
-            <%= link_to "Messages", "#", class: "nav-link" %>
-          </li>
-          <li class="nav-item dropdown">
-          <a href="#" class="avatar" id="navbarDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <%= image_tag "https://kitt.lewagon.com/placeholder/users/ssaunier", class: "avatar", alt: "dropdown menu" %>
-          </a>
-            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-              <%= link_to "Action", "#", class: "dropdown-item" %>
-              <%= link_to "Another action", "#", class: "dropdown-item" %>
-              <%= link_to "Log out", destroy_user_session_path, data: {turbo_method: :delete}, class: "dropdown-item" %>
-            </div>
-          </li>
-        <% else %>
-          <li class="nav-item">
-            <%= link_to "Login", new_user_session_path, class: "nav-link" %>
-          </li>
-        <% end %>
-      </ul>
+    
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+      <!-- Menu button with dropdown -->
+      <div class="dropdown">
+        <button class="btn btn-icon" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="fas fa-bars"></i>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+          <% if user_signed_in? %>
+            <li>
+              <%= link_to searches_path, class: "dropdown-item" do %>
+                <i class="fas fa-history me-2"></i>History
+              <% end %>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <%= link_to destroy_user_session_path, data: { turbo_method: :delete }, class: "dropdown-item text-danger" do %>
+                <i class="fas fa-sign-out-alt me-2"></i>Log out
+              <% end %>
+            </li>
+          <% else %>
+            <li>
+              <%= link_to new_user_session_path, class: "dropdown-item" do %>
+                <i class="fas fa-sign-in-alt me-2"></i>Log in
+              <% end %>
+            </li>
+            <li>
+              <%= link_to new_user_registration_path, class: "dropdown-item" do %>
+                <i class="fas fa-user-plus me-2"></i>Sign up
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
     </div>
   </div>
-</div>
+</nav>
