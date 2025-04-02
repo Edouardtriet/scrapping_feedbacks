@@ -33,9 +33,46 @@
     border-radius: $border-radius;
     color: $dark;
     background: transparent;
+    transition: all 0.2s ease;
 
     &:hover {
-      background-color: $primary;
+      background-color: rgba($primary, 0.1);
+      color: $primary;
+    }
+  }
+
+  .dropdown-menu {
+    margin-top: 0.5rem;
+    border: 1px solid rgba($dark, 0.1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+                0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    border-radius: $border-radius;
+    
+    .dropdown-item {
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
+      color: $dark;
+      transition: all 0.2s ease;
+
+      i {
+        width: 20px;
+        text-align: center;
+      }
+
+      &:hover {
+        background-color: rgba($primary, 0.1);
+        color: $primary;
+      }
+
+      &.text-danger:hover {
+        background-color: rgba($danger, 0.1);
+        color: $danger;
+      }
+    }
+
+    .dropdown-divider {
+      margin: 0.5rem 0;
+      border-top-color: rgba($dark, 0.1);
     }
   }
 }
