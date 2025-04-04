@@ -7,6 +7,7 @@ Rails.application.routes.draw do
       get 'save_search'
       get 'analyze'
       get 'download_csv'
+      post 'analyze_with_ai'
     end
   end
 

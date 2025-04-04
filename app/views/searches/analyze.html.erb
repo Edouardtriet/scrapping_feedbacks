@@ -1,270 +1,301 @@
 <div class="container py-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div class="text-muted">
-    <!-- here we hardcoded, we will in the future just use the review.count -->
+      <!-- here we hardcoded, we will in the future just use the review.count -->
       4560 Results for: <strong><%= @search.app_name %></strong>
     </div>
   </div>
 
   <div class="card mb-4">
     <div class="card-body">
-
-    <div class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h1>Review Insights</h1>
-      <div class="text-muted">
-      <!-- Add download link for CSV file -->
-      <% if @csv_url %>
-        <a href="<%= @csv_url %>" class="btn btn-primary mt-3">Download Reviews as CSV</a>
-      <% else %>
-        <p class="text-danger">No CSV file available for download.</p>
-      <% end %>
-      </div>
-    </div>
-
-    <div class="card mb-4">
-      <div class="card-body">
-        <p>Welcome! Ask me anything about the app reviews or click on a suggested question to get started.</p>
-      </div>
-    </div>
-  </div>
-
-
-      <h5>Suggested questions:</h5>
-      <div class="suggested-questions mb-4">
-        <div class="row" id="questions-container">
-          <div class="col-md-6 mb-2">
-            <button class="btn btn-outline-secondary w-100 text-start" onclick="showResponse('What do users like most about this app?')">What do users like most about this app?</button>
-          </div>
-          <div class="col-md-6 mb-2">
-            <button class="btn btn-outline-secondary w-100 text-start" onclick="showResponse('What are the most common complaints?')">What are the most common complaints?</button>
+      <div class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h1>Review Insights</h1>
+          <div class="text-muted">
+            <!-- Add download link for CSV file -->
+            <% if @csv_url %>
+              <a href="<%= @csv_url %>" class="btn btn-primary mt-3">Download Reviews as CSV</a>
+            <% else %>
+              <p class="text-danger">No CSV file available for download.</p>
+            <% end %>
           </div>
         </div>
-      </div>
 
-      <div class="input-group">
-        <input type="text" class="form-control" id="user-input" placeholder="Ask a question about the reviews...">
-        <button class="btn btn-primary" onclick="handleUserInput()">Send</button>
-      </div>
+        <div class="card mb-4">
+          <div class="card-body">
+            <p>Welcome! Ask me anything about the app reviews or click on a suggested question to get started.</p>
+          </div>
+        </div>
+
+        <div id="chat-messages" class="mb-4" style="max-height: 400px; overflow-y: auto;">
+          <!-- Chat messages will appear here -->
+        </div>
+
+        <h5>Suggested questions:</h5>
+<div class="suggested-questions mb-4">
+  <div class="row" id="questions-container">
+    <div class="col-md-6 mb-2">
+      <button class="btn btn-outline-secondary w-100 text-start" onclick="showResponse('What do users like most about this app?')">What do users like most about this app?</button>
+    </div>
+    <div class="col-md-6 mb-2">
+      <button class="btn btn-outline-secondary w-100 text-start" onclick="showResponse('What are the most common complaints?')">What are the most common complaints?</button>
+    </div>
+    <div class="col-md-6 mb-2">
+      <button class="btn btn-outline-secondary w-100 text-start" onclick="showResponse('Create a chart showing rating distribution')">Create a chart showing rating distribution</button>
+    </div>
+    <div class="col-md-6 mb-2">
+      <button class="btn btn-outline-secondary w-100 text-start" onclick="showResponse('Graph the sentiment trends over time')">Graph the sentiment trends over time</button>
     </div>
   </div>
 </div>
 
-<script>
-  // Array of all available questions
-  const allQuestions = [
-    'What do users like most about this app?',
-    'What are the most common complaints?',
-    'How has sentiment changed in recent versions?',
-    'What features are users requesting?',
-    'Compare iOS vs Android reviews'
-  ];
-
-  // Keep track of which questions are currently displayed
-  let currentQuestionIndices = [0, 1];
-
-  // Function to get a random question that isn't currently displayed
-  function getNewQuestionIndex() {
-    const availableIndices = allQuestions
-      .map((_, index) => index)
-      .filter(index => !currentQuestionIndices.includes(index));
-
-    if (availableIndices.length === 0) return null;
-
-    const randomIndex = Math.floor(Math.random() * availableIndices.length);
-    return availableIndices[randomIndex];
-  }
-
-  // Function to update the question buttons
-  function updateQuestionButtons(clickedQuestion) {
-    const clickedIndex = allQuestions.indexOf(clickedQuestion);
-    const buttonIndex = currentQuestionIndices.indexOf(clickedIndex);
-
-    if (buttonIndex !== -1) {
-      const newQuestionIndex = getNewQuestionIndex();
-      if (newQuestionIndex !== null) {
-        currentQuestionIndices[buttonIndex] = newQuestionIndex;
-
-        // Update the button
-        const questionsContainer = document.getElementById('questions-container');
-        const buttons = questionsContainer.getElementsByTagName('button');
-        buttons[buttonIndex].textContent = allQuestions[newQuestionIndex];
-        buttons[buttonIndex].onclick = function() {
-          showResponse(allQuestions[newQuestionIndex]);
-        };
-      }
-    }
-  }
-
-  // This function creates a typing effect for text
-  // Parameters:
-  // - element: where to show the text
-  // - text: what text to type out
-  // - speed: how fast to type (in milliseconds, lower = faster)
-  function typeMessage(element, text, speed = 50) {
-    let index = 0;
-    let displayText = '';
-    element.innerHTML = '<p></p>';
-
-    function type() {
-      if (index < text.length) {
-        displayText += text.charAt(index);
-        element.querySelector('p').innerHTML = displayText;
-        index++;
-        setTimeout(type, speed);
-      }
-    }
-
-    type();
-  }
-
-  // This function handles what happens when a question button is clicked
-  function showResponse(question) {
-    // First update the question buttons
-    updateQuestionButtons(question);
-
-    // Dictionary of questions and their corresponding answers
-    // You can modify these responses to show different text
-    const responses = {
-      'What do users like most about this app?': `<p>Based on my analysis of the Spotify app reviews from the Apple Store, here are the top features users like most:</p>
-<p><strong>Most Appreciated Features</strong></p>
-<p>1. Playlists - The most mentioned positive feature (1,167 mentions in 4-5 star reviews), users love Spotify's playlist functionality, including creating, sharing, and discovering playlists.</p>
-<p>2. Premium Subscription Benefits - Many users (638 mentions) highlight premium features as major advantages, particularly:</p>
-<p style="margin-left: 20px">• No advertisements</p>
-<p style="margin-left: 20px">• Unlimited song skipping</p>
-<p style="margin-left: 20px">• Offline listening/downloads</p>
-<p style="margin-left: 20px">• Higher sound quality</p>
-<p>3. Music Listening Experience - Users value the overall listening experience (509 mentions), praising the app's core functionality.</p>
-<p>4. Artist Discovery - Finding and following favorite artists is important to many users (349 mentions).</p>
-<p>5. Shuffle Functionality - The shuffle feature receives significant positive feedback (309 mentions).</p>
-<p>6. Download Capability - The ability to download music for offline listening is highly valued (285 mentions).</p>
-<p>7. User Interface - Many users appreciate the app's UI design and navigation (282 mentions).</p>
-<p>8. Podcast Integration - Podcast functionality is a standout feature (243 mentions in positive reviews), showing how Spotify has successfully expanded beyond music.</p>
-<p>9. Search Functionality - Users appreciate being able to easily find music (235 mentions).</p>
-<p>10. Recommendations - Spotify's suggestion algorithms receive positive feedback (187 mentions).</p>
-<p><strong>Other Appreciated Elements:</strong></p>
-<p style="margin-left: 20px">• Lyrics - The lyrics feature is mentioned positively in 123 reviews</p>
-<p style="margin-left: 20px">• Radio Functionality - Mentioned positively in 106 reviews</p>
-<p style="margin-left: 20px">• Sound Quality - Praised in 92 reviews</p>
-<p style="margin-left: 20px">• Discovery Features - Users specifically mention discovery features (79 mentions)</p>
-<p style="margin-left: 20px">• Social Features - The ability to share music and follow friends is valued (128 friend-related mentions)</p>
-<p><strong>Overall Rating:</strong><br>
-Most users rate the app positively with 1,564 five-star and 750 four-star reviews out of 3,640 total reviews.</p>`,
-      'What are the most common complaints?': 'The main issues reported are occasional crashes during heavy usage and some users experiencing slow loading times. A few users also mentioned difficulty with the login process.',
-      'How has sentiment changed in recent versions?': 'Sentiment has improved significantly in the latest version (2.1.0), with users praising the bug fixes and new features. The average rating has increased from 4.2 to 4.5 stars.',
-      'What features are users requesting?': 'Users are most commonly requesting dark mode, offline functionality, and the ability to sync data across devices. Many also want more customization options.',
-      'Compare iOS vs Android reviews': 'iOS users generally rate the app higher (4.6 stars) compared to Android users (4.2 stars). iOS users particularly appreciate the smooth animations, while Android users value the customization options.'
-    };
-
-    // Get the chat container where we'll show messages
-    const chatMessages = document.getElementById('chat-messages');
-    // Get current time in HH:MM format
-    const currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-    // Add the user's question to the chat
-    chatMessages.innerHTML += `
-      <div class="chat-message bg-primary text-white rounded border p-3 mt-2">
-        <p>${question}</p>
+        <div class="input-group">
+          <input type="text" class="form-control" id="user-input" placeholder="Ask a question about the reviews...">
+          <button class="btn btn-primary" onclick="handleUserInput()">Send</button>
+        </div>
       </div>
-    `;
+    </div>
+  </div>
 
-    // Wait 500ms (half a second) before showing the response
-    setTimeout(() => {
-      // Create a new div for the response
-      const responseDiv = document.createElement('div');
-      // Style the response message with border and padding
-      responseDiv.className = 'chat-message bg-white text-dark rounded border p-3 mt-2';
-      responseDiv.innerHTML = '<p></p>';
-      // Add the response div to the chat
-      chatMessages.appendChild(responseDiv);
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    // Array of all available questions
+    const allQuestions = [
+      'What do users like most about this app?',
+      'What are the most common complaints?',
+      'How has sentiment changed in recent versions?',
+      'What features are users requesting?',
+      'Compare iOS vs Android reviews'
+    ];
 
-      // Start typing out the response
-      typeMessage(responseDiv, responses[question], 3);
+    // Keep track of which questions are currently displayed
+    let currentQuestionIndices = [0, 1];
 
-      // Scroll to the bottom of the chat
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-    }, 500);
-  }
+    // Function to get a random question that isn't currently displayed
+    function getNewQuestionIndex() {
+      const availableIndices = allQuestions
+        .map((_, index) => index)
+        .filter(index => !currentQuestionIndices.includes(index));
 
-  // Add this new function to handle user input
-  function handleUserInput() {
-    const input = document.getElementById('user-input');
-    const question = input.value.trim();
+      if (availableIndices.length === 0) return null;
 
-    if (question) {
-      // Add the user's question to the chat
+      const randomIndex = Math.floor(Math.random() * availableIndices.length);
+      return availableIndices[randomIndex];
+    }
+
+    // Function to update the question buttons
+    function updateQuestionButtons(clickedQuestion) {
+      const clickedIndex = allQuestions.indexOf(clickedQuestion);
+      const buttonIndex = currentQuestionIndices.indexOf(clickedIndex);
+
+      if (buttonIndex !== -1) {
+        const newQuestionIndex = getNewQuestionIndex();
+        if (newQuestionIndex !== null) {
+          currentQuestionIndices[buttonIndex] = newQuestionIndex;
+
+          // Update the button
+          const questionsContainer = document.getElementById('questions-container');
+          const buttons = questionsContainer.getElementsByTagName('button');
+          buttons[buttonIndex].textContent = allQuestions[newQuestionIndex];
+          buttons[buttonIndex].onclick = function() {
+            showResponse(allQuestions[newQuestionIndex]);
+          };
+        }
+      }
+    }
+
+    // This function creates a typing effect for text
+    // Parameters:
+    // - element: where to show the text
+    // - text: what text to type out
+    // - speed: how fast to type (in milliseconds, lower = faster)
+    function typeMessage(element, text, speed = 50) {
+      let index = 0;
+      let displayText = '';
+      element.innerHTML = '<p></p>';
+
+      function type() {
+        if (index < text.length) {
+          displayText += text.charAt(index);
+          element.querySelector('p').innerHTML = displayText;
+          index++;
+          setTimeout(type, speed);
+        }
+      }
+
+      type();
+    }
+
+    // Add this new function to render charts
+    function renderChart(chartData, element) {
+      try {
+        // Parse the JSON if it's a string
+        let chartConfig;
+        if (typeof chartData === 'string') {
+          // Look for JSON object in the string
+          const jsonMatch = chartData.match(/\{[\s\S]*\}/);
+          if (jsonMatch) {
+            chartConfig = JSON.parse(jsonMatch[0]);
+          } else {
+            throw new Error("Couldn't extract chart configuration");
+          }
+        } else {
+          chartConfig = chartData;
+        }
+
+        // Create a canvas for the chart
+        const canvasContainer = document.createElement('div');
+        canvasContainer.className = 'chart-container';
+        canvasContainer.style.position = 'relative';
+        canvasContainer.style.height = '300px';
+        canvasContainer.style.width = '100%';
+        canvasContainer.style.marginTop = '20px';
+
+        const canvas = document.createElement('canvas');
+        canvasContainer.appendChild(canvas);
+
+        // Create a paragraph for the explanation
+        const explanation = document.createElement('p');
+        explanation.className = 'mt-2';
+        explanation.textContent = chartConfig.explanation || "Chart based on app review data";
+
+        // Add both to the container
+        element.appendChild(canvasContainer);
+        element.appendChild(explanation);
+
+        // Create the chart
+        new Chart(canvas, {
+          type: chartConfig.chartType || 'bar',
+          data: {
+            labels: chartConfig.labels || [],
+            datasets: chartConfig.datasets || []
+          },
+          options: chartConfig.options || {
+            responsive: true,
+            maintainAspectRatio: false
+          }
+        });
+
+      } catch (error) {
+        console.error("Chart rendering error:", error);
+        element.innerHTML += `<p>Sorry, I couldn't render the chart. Error: ${error.message}</p>`;
+      }
+    }
+
+    // Add this new function to process responses
+    function processResponse(data, responseDiv) {
+      // Clear loading message
+      responseDiv.innerHTML = '';
+
+      if (data.type === "chart") {
+        // First add the text explanation
+        const textDiv = document.createElement('div');
+        responseDiv.appendChild(textDiv);
+
+        // Type out the text part (excluding the JSON)
+        const textContent = data.content.replace(/\{[\s\S]*\}/, "");
+        typeMessage(textDiv, textContent, 3);
+
+        // Then render the chart
+        setTimeout(() => {
+          renderChart(data.content, responseDiv);
+        }, textContent.length * 3 + 100); // Give some time for typing to complete
+      } else {
+        // Just type the text response as before
+        typeMessage(responseDiv, data.content, 3);
+      }
+    }
+
+    // Update your existing showResponse function
+    function showResponse(question) {
+      // First update the question buttons
+      updateQuestionButtons(question);
+
+      // Get the chat container
       const chatMessages = document.getElementById('chat-messages');
-      const currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
+      // Add the user's question to the chat
       chatMessages.innerHTML += `
         <div class="chat-message bg-primary text-white rounded border p-3 mt-2">
           <p>${question}</p>
         </div>
       `;
 
-      // Clear the input field
-      input.value = '';
+      // Create a loading message
+      const responseDiv = document.createElement('div');
+      responseDiv.className = 'chat-message bg-white text-dark rounded border p-3 mt-2';
+      responseDiv.innerHTML = '<p>Analyzing reviews...</p>';
+      chatMessages.appendChild(responseDiv);
 
-      // Show the response after a short delay
-      setTimeout(() => {
+      // Scroll to the bottom of the chat
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+
+      // Make API call to your backend
+      fetch('/searches/<%= @search.id %>/analyze_with_ai', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify({ question: question })
+      })
+      .then(response => response.json())
+      .then(data => {
+        // Use the new processResponse function instead of just typing text
+        processResponse(data, responseDiv);
+      })
+      .catch(error => {
+        responseDiv.innerHTML = '<p>Sorry, I encountered an error analyzing the reviews. Please try again.</p>';
+        console.error('Error:', error);
+      });
+    }
+
+    // Update your handleUserInput function too
+    function handleUserInput() {
+      const input = document.getElementById('user-input');
+      const question = input.value.trim();
+
+      if (question) {
+        // Add the user's question to the chat
+        const chatMessages = document.getElementById('chat-messages');
+
+        chatMessages.innerHTML += `
+          <div class="chat-message bg-primary text-white rounded border p-3 mt-2">
+            <p>${question}</p>
+          </div>
+        `;
+
+        // Clear the input field
+        input.value = '';
+
+        // Create a loading message
         const responseDiv = document.createElement('div');
         responseDiv.className = 'chat-message bg-white text-dark rounded border p-3 mt-2';
-        responseDiv.innerHTML = '<p></p>';
+        responseDiv.innerHTML = '<p>Analyzing reviews...</p>';
         chatMessages.appendChild(responseDiv);
 
-        // Here's where you can customize the response
-        const response = `<p>Based on my analysis of the Spotify reviews, here are the key features and improvements you should consider for a competitive music streaming service:</p>
-
-<p><strong>1. Improved Shuffle Algorithm</strong></p>
-<p style="margin-left: 20px">One of the most consistent complaints about Spotify is its shuffle functionality. Users frequently mention that it feels "not truly random" and often plays the same songs repeatedly.</p>
-<p style="margin-left: 20px"><strong>Competitive Feature:</strong> Implement a truly random shuffle algorithm with options for "smart shuffle" that users can toggle on/off. Allow users to customize their shuffle experience (e.g., ensuring artist variety, time period variety).</p>
-
-<p><strong>2. Ad Experience Revolution</strong></p>
-<p style="margin-left: 20px">Free users are particularly frustrated by the quantity and repetitiveness of ads.</p>
-<p style="margin-left: 20px"><strong>Competitive Feature:</strong> Create a more tolerable ad experience with shorter, less frequent ads. Consider alternative monetization models like a lower-cost tier with minimal ads or a "watch one longer ad for 30 minutes ad-free" option.</p>
-
-<p><strong>3. Enhanced Playlist Management</strong></p>
-<p style="margin-left: 20px">Users want more control over how they organize their music.</p>
-<p style="margin-left: 20px"><strong>Competitive Feature:</strong> Offer advanced playlist organization with folders, tags, smart playlists that update automatically based on criteria, and better sorting/filtering options.</p>
-
-<p><strong>4. UI Simplification with Customization</strong></p>
-<p style="margin-left: 20px">Many complaints focus on UI changes and complexity.</p>
-<p style="margin-left: 20px"><strong>Competitive Feature:</strong> Create a customizable interface where users can choose which features to display prominently. Allow UI personalization with themes, layouts, and the ability to revert to previous designs if preferred.</p>
-
-<p><strong>5. Improved Lyrics Integration</strong></p>
-<p style="margin-left: 20px">While Spotify has lyrics, users often complain about inconsistency and functionality issues.</p>
-<p style="margin-left: 20px"><strong>Competitive Feature:</strong> Implement full-featured lyrics for all songs with time synchronization, translations, karaoke mode, and the ability to search songs by lyrics.</p>
-
-<p><strong>6. Better Library Management</strong></p>
-<p style="margin-left: 20px">Users repeatedly mention difficulties with organizing their saved music.</p>
-<p style="margin-left: 20px"><strong>Competitive Feature:</strong> Create a more intuitive library system with multiple ways to categorize music (by mood, activity, genre, era) and enhanced search within personal libraries.</p>
-
-<p><strong>7. User-Centered "Like" System</strong></p>
-<p style="margin-left: 20px">There are many complaints about the heart/like button changes.</p>
-<p style="margin-left: 20px"><strong>Competitive Feature:</strong> Design an intuitive, consistent system for saving music that clearly separates "liking" from "adding to playlist" and maintains a sensible user flow.</p>
-
-<p><strong>8. More Control Over Recommendations</strong></p>
-<p style="margin-left: 20px">Users dislike when unwanted songs are added to their playlists or listening sessions.</p>
-<p style="margin-left: 20px"><strong>Competitive Feature:</strong> Give users granular control over recommendations with clear options to disable auto-added songs and more transparency about why songs are recommended.</p>
-
-<p><strong>9. Enhanced Music Discovery</strong></p>
-<p style="margin-left: 20px">While discovery features exist, they could be improved.</p>
-<p style="margin-left: 20px"><strong>Competitive Feature:</strong> Create more sophisticated discovery tools like mood-based recommendations, genre exploration maps, "six degrees of separation" between artists, and community-curated discovery playlists.</p>
-
-<p><strong>10. Listening Stats and History</strong></p>
-<p style="margin-left: 20px">Users want more insights into their listening habits.</p>
-<p style="margin-left: 20px"><strong>Competitive Feature:</strong> Provide comprehensive listening statistics, not just year-end summaries, with detailed history, listening patterns, and the ability to revisit songs played in the past.</p>`;
-
-        typeMessage(responseDiv, response, 3);
+        // Scroll to the bottom of the chat
         chatMessages.scrollTop = chatMessages.scrollHeight;
-      }, 500);
-    }
-  }
 
-  // Add event listener for Enter key
-  document.getElementById('user-input').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-      handleUserInput();
+        // Make API call to your backend
+        fetch('/searches/<%= @search.id %>/analyze_with_ai', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+          },
+          body: JSON.stringify({ question: question })
+        })
+        .then(response => response.json())
+        .then(data => {
+          // Use the new processResponse function
+          processResponse(data, responseDiv);
+        })
+        .catch(error => {
+          responseDiv.innerHTML = '<p>Sorry, I encountered an error analyzing the reviews. Please try again.</p>';
+          console.error('Error:', error);
+        });
+      }
     }
-  });
-</script>
+  </script>
+</div>

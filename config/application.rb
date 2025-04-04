@@ -8,6 +8,16 @@ Bundler.require(*Rails.groups)
 
 module ScrappingFeedbacks
   class Application < Rails::Application
+    # Load environment variables from local_env.yml
+    config.before_configuration do
+      env_file = File.join(Rails.root, 'config', 'local_env.yml')
+      if File.exist?(env_file)
+        YAML.load(File.open(env_file)).each do |key, value|
+          ENV[key.to_s] = value.to_s
+        end
+      end
+    end
+
     config.action_controller.raise_on_missing_callback_actions = false if Rails.version >= "7.1.0"
     config.generators do |generate|
       generate.assets false
