@@ -1,4 +1,3 @@
-# app/services/csv_analyzer_service.rb
 require 'csv'
 
 class CsvAnalyzerService
@@ -8,22 +7,49 @@ class CsvAnalyzerService
   end
 
   def analyze(question)
+    # Determine if this is a chart request
+    is_chart_request = question.downcase.include?('chart') ||
+                      question.downcase.include?('graph') ||
+                      question.downcase.include?('plot') ||
+                      question.downcase.include?('visualization')
+
     # For large CSV files, read a sample to avoid token limits
-    csv_content = read_csv_sample(500) # Read first 1000 rows
+    csv_content = read_csv_sample(500) # Read first 500 rows
 
-    response = @client.chat(
-      parameters: {
-        model: "gpt-4o-mini",
-        messages: [
-          { role: "system", content: "You are a CSV analysis assistant. Analyze the following CSV data and answer the user's question." },
-          { role: "user", content: "CSV Data:\n#{csv_content}\n\nQuestion: #{question}" }
-        ],
-        temperature: 0.7,
-        max_tokens: 1000 # Adjust as needed
-      }
-    )
+    if is_chart_request
+      response = @client.chat(
+        parameters: {
+          model: "gpt-4o-mini",
+          messages: [
+            { role: "system", content: "You are a CSV analysis assistant that creates charts. Analyze the CSV data and return a JSON object with chart configuration that can be used by Chart.js. Include 'chartType' (bar, line, pie, etc), 'labels', 'datasets', and any other required properties. Also include a brief explanation of the chart." },
+            { role: "user", content: "CSV Data:\n#{csv_content}\n\nQuestion: #{question}" }
+          ],
+          temperature: 0.7,
+          max_tokens: 1500
+        }
+      )
+    else
+      response = @client.chat(
+        parameters: {
+          model: "gpt-4o-mini",
+          messages: [
+            { role: "system", content: "You are a CSV analysis assistant. Analyze the following CSV data and answer the user's question." },
+            { role: "user", content: "CSV Data:\n#{csv_content}\n\nQuestion: #{question}" }
+          ],
+          temperature: 0.7,
+          max_tokens: 1000
+        }
+      )
+    end
 
-    response.dig("choices", 0, "message", "content")
+    content = response.dig("choices", 0, "message", "content")
+
+    if is_chart_request
+      # Add chart indicator to the response
+      { type: "chart", content: content }
+    else
+      { type: "text", content: content }
+    end
   end
 
   private

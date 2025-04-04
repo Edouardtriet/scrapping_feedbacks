@@ -119,14 +119,14 @@ class SearchesController < ApplicationController
 
     begin
       analyzer = CsvAnalyzerService.new(csv_path.to_s)
-      @analysis = analyzer.analyze(question)
+      result = analyzer.analyze(question)
 
-      # Only respond with JSON
-      render json: { analysis: @analysis }
+      # Return the appropriate response format
+      render json: result
     rescue => e
-      @error = "Error analyzing CSV: #{e.message}"
+      error_message = "Error analyzing CSV: #{e.message}"
       Rails.logger.error("CSV Analysis Error: #{e.message}\n#{e.backtrace.join("\n")}")
-      render json: { error: @error }, status: :unprocessable_entity
+      render json: { type: "error", content: error_message }, status: :unprocessable_entity
     end
   end
 

@@ -32,16 +32,22 @@
         </div>
 
         <h5>Suggested questions:</h5>
-        <div class="suggested-questions mb-4">
-          <div class="row" id="questions-container">
-            <div class="col-md-6 mb-2">
-              <button class="btn btn-outline-secondary w-100 text-start" onclick="showResponse('What do users like most about this app?')">What do users like most about this app?</button>
-            </div>
-            <div class="col-md-6 mb-2">
-              <button class="btn btn-outline-secondary w-100 text-start" onclick="showResponse('What are the most common complaints?')">What are the most common complaints?</button>
-            </div>
-          </div>
-        </div>
+<div class="suggested-questions mb-4">
+  <div class="row" id="questions-container">
+    <div class="col-md-6 mb-2">
+      <button class="btn btn-outline-secondary w-100 text-start" onclick="showResponse('What do users like most about this app?')">What do users like most about this app?</button>
+    </div>
+    <div class="col-md-6 mb-2">
+      <button class="btn btn-outline-secondary w-100 text-start" onclick="showResponse('What are the most common complaints?')">What are the most common complaints?</button>
+    </div>
+    <div class="col-md-6 mb-2">
+      <button class="btn btn-outline-secondary w-100 text-start" onclick="showResponse('Create a chart showing rating distribution')">Create a chart showing rating distribution</button>
+    </div>
+    <div class="col-md-6 mb-2">
+      <button class="btn btn-outline-secondary w-100 text-start" onclick="showResponse('Graph the sentiment trends over time')">Graph the sentiment trends over time</button>
+    </div>
+  </div>
+</div>
 
         <div class="input-group">
           <input type="text" class="form-control" id="user-input" placeholder="Ask a question about the reviews...">
@@ -51,6 +57,7 @@
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
     // Array of all available questions
     const allQuestions = [
@@ -119,7 +126,87 @@
       type();
     }
 
-    // This function handles what happens when a question button is clicked
+    // Add this new function to render charts
+    function renderChart(chartData, element) {
+      try {
+        // Parse the JSON if it's a string
+        let chartConfig;
+        if (typeof chartData === 'string') {
+          // Look for JSON object in the string
+          const jsonMatch = chartData.match(/\{[\s\S]*\}/);
+          if (jsonMatch) {
+            chartConfig = JSON.parse(jsonMatch[0]);
+          } else {
+            throw new Error("Couldn't extract chart configuration");
+          }
+        } else {
+          chartConfig = chartData;
+        }
+
+        // Create a canvas for the chart
+        const canvasContainer = document.createElement('div');
+        canvasContainer.className = 'chart-container';
+        canvasContainer.style.position = 'relative';
+        canvasContainer.style.height = '300px';
+        canvasContainer.style.width = '100%';
+        canvasContainer.style.marginTop = '20px';
+
+        const canvas = document.createElement('canvas');
+        canvasContainer.appendChild(canvas);
+
+        // Create a paragraph for the explanation
+        const explanation = document.createElement('p');
+        explanation.className = 'mt-2';
+        explanation.textContent = chartConfig.explanation || "Chart based on app review data";
+
+        // Add both to the container
+        element.appendChild(canvasContainer);
+        element.appendChild(explanation);
+
+        // Create the chart
+        new Chart(canvas, {
+          type: chartConfig.chartType || 'bar',
+          data: {
+            labels: chartConfig.labels || [],
+            datasets: chartConfig.datasets || []
+          },
+          options: chartConfig.options || {
+            responsive: true,
+            maintainAspectRatio: false
+          }
+        });
+
+      } catch (error) {
+        console.error("Chart rendering error:", error);
+        element.innerHTML += `<p>Sorry, I couldn't render the chart. Error: ${error.message}</p>`;
+      }
+    }
+
+    // Add this new function to process responses
+    function processResponse(data, responseDiv) {
+      // Clear loading message
+      responseDiv.innerHTML = '';
+
+      if (data.type === "chart") {
+        // First add the text explanation
+        const textDiv = document.createElement('div');
+        responseDiv.appendChild(textDiv);
+
+        // Type out the text part (excluding the JSON)
+        const textContent = data.content.replace(/\{[\s\S]*\}/, "");
+        typeMessage(textDiv, textContent, 3);
+
+        // Then render the chart
+        setTimeout(() => {
+          renderChart(data.content, responseDiv);
+        }, textContent.length * 3 + 100); // Give some time for typing to complete
+      } else {
+        // Just type the text response as before
+        typeMessage(responseDiv, data.content, 3);
+      }
+    }
+
+    // Update your existing showResponse function
     function showResponse(question) {
       // First update the question buttons
       updateQuestionButtons(question);
@@ -154,9 +241,8 @@
       })
       .then(response => response.json())
       .then(data => {
-        // Replace loading message with actual response
-        responseDiv.innerHTML = '<p></p>';
-        typeMessage(responseDiv, data.analysis, 3);
+        // Use the new processResponse function instead of just typing text
+        processResponse(data, responseDiv);
       })
       .catch(error => {
         responseDiv.innerHTML = '<p>Sorry, I encountered an error analyzing the reviews. Please try again.</p>';
@@ -164,7 +250,7 @@
       });
     }
 
-    // Function to handle user input
+    // Update your handleUserInput function too
     function handleUserInput() {
       const input = document.getElementById('user-input');
       const question = input.value.trim();
@@ -202,9 +288,8 @@
         })
         .then(response => response.json())
         .then(data => {
-          // Replace loading message with actual response
-          responseDiv.innerHTML = '<p></p>';
-          typeMessage(responseDiv, data.analysis, 3);
+          // Use the new processResponse function
+          processResponse(data, responseDiv);
         })
         .catch(error => {
           responseDiv.innerHTML = '<p>Sorry, I encountered an error analyzing the reviews. Please try again.</p>';
