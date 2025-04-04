@@ -5,7 +5,7 @@ class SearchesController < ApplicationController
   steps :app_name, :store_type, :country, :timeframe
 
   # Skip the wizard middleware for non-wizard actions
-  skip_before_action :setup_wizard, only: [:analyze, :index, :create, :download_csv]
+  skip_before_action :setup_wizard, only: [:analyze, :index, :create, :download_csv, :analyze_with_ai]
 
   def show
     @search = current_user.searches.find_or_initialize_by(id: session[:current_search_id])
@@ -49,25 +49,25 @@ class SearchesController < ApplicationController
 
   def analyze
     @search = Search.find(params[:id])
-    
+
     # Only use Google Play ID for now
     app_id = @search.google_id
-    
+
     # Debug information
     Rails.logger.info "Search ID: #{@search.id}"
     Rails.logger.info "App ID: #{app_id.inspect}"
     Rails.logger.info "Google ID: #{@search.google_id.inspect}"
     Rails.logger.info "Apple ID: #{@search.apple_id.inspect}"
-    
+
     # Check if app_id is present
     if app_id.blank?
       @error = "Google Play Store ID is missing. Please go back and enter a valid Google Play Store ID (e.g., com.spotify.music)."
       return
     end
-    
+
     output_file = Rails.root.join("public", "reviews_#{@search.id}.csv")
     script_path = Rails.root.join("lib", "scripts", "extract_reviews.py")
-    
+
     # Find Python executable - try virtual env first, fall back to system Python
     venv_python = Rails.root.join(".venv", "bin", "python3")
     python_cmd = if File.exist?(venv_python)
@@ -80,7 +80,7 @@ class SearchesController < ApplicationController
 
     Rails.logger.info "Using Python: #{python_cmd}"
     Rails.logger.info "Script path exists? #{File.exist?(script_path)}"
-    
+
     Rails.logger.info "Executing command:"
     command = "#{python_cmd} #{script_path} #{app_id} #{output_file}"
     Rails.logger.info command
@@ -88,7 +88,7 @@ class SearchesController < ApplicationController
     # Capture output and errors
     output = `#{command} 2>&1`
     result = $?.success?
-    
+
     Rails.logger.info "Command output: #{output}"
     Rails.logger.info "Command result: #{result}"
     Rails.logger.info "File exists? #{File.exist?(output_file)}"
@@ -102,7 +102,7 @@ class SearchesController < ApplicationController
 
   def download_csv
     app_id = params[:id]
-  raise
+    raise
     csv_data = `python3 path/to/your/script.py #{app_id} -`  # Output to stdout
 
     send_data csv_data,
@@ -111,6 +111,24 @@ class SearchesController < ApplicationController
               disposition: "attachment"
   end
 
+  def analyze_with_ai
+    @search = Search.find(params[:id])
+    csv_path = Rails.root.join("public", "reviews_#{@search.id}.csv")
+
+    question = params[:question].presence || "Analyze this CSV data and provide insights about the app reviews."
+
+    begin
+      analyzer = CsvAnalyzerService.new(csv_path.to_s)
+      @analysis = analyzer.analyze(question)
+
+      # Only respond with JSON
+      render json: { analysis: @analysis }
+    rescue => e
+      @error = "Error analyzing CSV: #{e.message}"
+      Rails.logger.error("CSV Analysis Error: #{e.message}\n#{e.backtrace.join("\n")}")
+      render json: { error: @error }, status: :unprocessable_entity
+    end
+  end
 
   def finish_wizard_path
     search = Search.find(session[:current_search_id])
@@ -142,5 +160,4 @@ class SearchesController < ApplicationController
       { code: 'CA', name: 'Canada' }
     ]
   end
-
 end
